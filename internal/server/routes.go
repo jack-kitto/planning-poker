@@ -27,6 +27,7 @@ func (s *FiberServer) RegisterFiberRoutes() {
 	}))
 
 	s.App.Get("/", adaptor.HTTPHandler(templ.Handler(web.LandingPage())))
+	s.App.Get("/login", adaptor.HTTPHandler(templ.Handler(web.LoginPage())))
 
 	s.App.Get("/health", s.healthHandler)
 
@@ -37,20 +38,6 @@ func (s *FiberServer) RegisterFiberRoutes() {
 		PathPrefix: "assets",
 		Browse:     false,
 	}))
-
-	s.App.Get("/web", adaptor.HTTPHandler(templ.Handler(web.HelloForm())))
-
-	s.App.Post("/hello", func(c *fiber.Ctx) error {
-		return web.HelloWebHandler(c)
-	})
-}
-
-func (s *FiberServer) HelloWorldHandler(c *fiber.Ctx) error {
-	resp := fiber.Map{
-		"message": "Hello World",
-	}
-
-	return c.JSON(resp)
 }
 
 func (s *FiberServer) healthHandler(c *fiber.Ctx) error {
