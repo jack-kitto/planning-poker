@@ -1,9 +1,9 @@
 package server
 
 import (
-	"github.com/gofiber/fiber/v2"
-
 	"planning-poker/internal/database"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type FiberServer struct {

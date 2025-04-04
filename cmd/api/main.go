@@ -39,7 +39,6 @@ func gracefulShutdown(fiberServer *server.FiberServer, done chan bool) {
 }
 
 func main() {
-
 	server := server.New()
 
 	server.RegisterFiberRoutes()
