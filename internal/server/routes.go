@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
+	"planning-poker/cmd/web"
 	"time"
 
 	"github.com/a-h/templ"
@@ -12,8 +14,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
-	"net/http"
-	"planning-poker/cmd/web"
 )
 
 func (s *FiberServer) RegisterFiberRoutes() {
@@ -26,7 +26,7 @@ func (s *FiberServer) RegisterFiberRoutes() {
 		MaxAge:           300,
 	}))
 
-	s.App.Get("/", s.HelloWorldHandler)
+	s.App.Get("/", adaptor.HTTPHandler(templ.Handler(web.LandingPage())))
 
 	s.App.Get("/health", s.healthHandler)
 
@@ -43,7 +43,6 @@ func (s *FiberServer) RegisterFiberRoutes() {
 	s.App.Post("/hello", func(c *fiber.Ctx) error {
 		return web.HelloWebHandler(c)
 	})
-
 }
 
 func (s *FiberServer) HelloWorldHandler(c *fiber.Ctx) error {
