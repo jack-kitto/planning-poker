@@ -3,6 +3,11 @@ package web
 templ LandingPage() {
 	@LandingTemplate() {
 		<div class="w-full h-full bg-gray-900 text-white flex flex-col items-center">
+			<script>
+        function handleLogin(event) {
+          window.location.href = '/login';
+        }
+      </script>
 			<!-- Header Section -->
 			<header class="w-full py-6 bg-gray-800 flex justify-center">
 				<h1 class="text-3xl font-bold tracking-wide">Grug Planning Poker</h1>
@@ -19,9 +24,9 @@ templ LandingPage() {
 				<p class="text-lg text-gray-300 max-w-2xl mb-8">
 					Grug tired of big-brain planning apps. Grug make simple tool for team to plan fast. Grug say: "Planning should be easy, like smashing rock!" Grug also share tool with cave friends. Open source on GitHub!
 				</p>
-				<a href="#cta" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg">
+				<button onclick="handleLogin(this)" class="bg-indigo-500 hover:bg-indigo-800 text-white font-semibold py-3 px-6 rounded-lg shadow-lg">
 					Grug Say: "Click Here to Start Planning!"
-				</a>
+				</button>
 			</section>
 			<!-- Key Features Section -->
 			<section class="py-16 px-6 bg-gray-800 w-full">
