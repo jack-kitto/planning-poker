@@ -31,14 +31,19 @@ func (s *FiberServer) RegisterFiberRoutes() {
 		MaxAge:           300,
 	}))
 
-	s.App.Get("/", adaptor.HTTPHandler(templ.Handler(web.LandingPage())))
-	s.App.Get("/login", adaptor.HTTPHandler(templ.Handler(web.LoginPage())))
+	// Basic routes
+	s.Get("/", adaptor.HTTPHandler(templ.Handler(web.LandingPage())))
+	s.Get("/login", adaptor.HTTPHandler(templ.Handler(web.LoginPage())))
+	s.Get("/register", adaptor.HTTPHandler(templ.Handler(web.SignUpPage())))
+	s.Get("/dashboard", s.protectedMiddleware(), s.dashboardHandler)
 
-	s.App.Get("/health", s.healthHandler)
+	// Health check
+	s.Get("/health", s.healthHandler)
 
-	s.App.Get("/websocket", websocket.New(s.websocketHandler))
+	// WebSocket
+	s.Get("/websocket", websocket.New(s.websocketHandler))
 
-	s.App.Use("/assets", filesystem.New(filesystem.Config{
+	s.Use("/assets", filesystem.New(filesystem.Config{
 		Root:       http.FS(web.Files),
 		PathPrefix: "assets",
 		Browse:     false,
