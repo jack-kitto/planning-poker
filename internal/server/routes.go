@@ -60,6 +60,15 @@ func (s *FiberServer) RegisterFiberRoutes() {
 	s.Get("/verify-email/:token", s.verifyEmailHandler)
 	s.Post("/resend-email", s.resendEmailHandler)
 
+	// Logout route
+	s.Get("/logout", func(c *fiber.Ctx) error {
+		sess := store.Get(c)
+		err := sess.Destroy()
+		if err != nil {
+			log.Println(err)
+		}
+		return c.Redirect("/")
+	})
 }
 
 func (s *FiberServer) healthHandler(c *fiber.Ctx) error {
