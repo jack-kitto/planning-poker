@@ -26,8 +26,8 @@ templ SignUpPage() {
 					<hr class="w-full border-gray-300"/>
 				</div>
 				<!-- Registration Form -->
-				<form method="POST" action="/register" class="text-left">
-					<!-- Username Input -->
+				<form method="POST" action="/send-email" class="text-left">
+					<!-- Name Input -->
 					<div class="mb-4">
 						<label for="username" class="text-sm font-medium text-gray-700">Name</label>
 						<input
@@ -39,7 +39,7 @@ templ SignUpPage() {
 					</div>
 					<!-- Email Input -->
 					<div class="mb-2">
-						<label for="password" class="text-sm font-medium text-gray-700">Email</label>
+						<label for="email" class="text-sm font-medium text-gray-700">Email</label>
 						<input
 							type="email"
 							id="email"
@@ -59,8 +59,8 @@ templ SignUpPage() {
 				<p class="text-sm text-gray-600 mt-4">
 					Already have an account? <a href="/login" class="text-blue-500">Sign in</a>
 				</p>
-				<p class="text-sm text-gray-600 mt-">
-					Didn't receive an email? <a href="/login" class="text-blue-500">Resend</a>
+				<p class="text-sm text-gray-600 mt-4">
+					Didn't receive an email? <a href="/resend-email" class="text-blue-500">Resend</a>
 				</p>
 			</section>
 		</div>
