@@ -21,9 +21,14 @@ import (
 	"github.com/shareed2k/goth_fiber"
 )
 
+var (
+	store       = session.New()
+	emailTokens = make(map[string]string)
+)
+
 func (s *FiberServer) RegisterFiberRoutes() {
 	// Apply CORS middleware
-	s.App.Use(cors.New(cors.Config{
+	s.Use(cors.New(cors.Config{
 		AllowOrigins:     "*",
 		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS,PATCH",
 		AllowHeaders:     "Accept,Authorization,Content-Type",
@@ -51,6 +56,10 @@ func (s *FiberServer) RegisterFiberRoutes() {
 	// OAuth routes
 	s.Get("/auth/:provider", s.authHandler)
 	s.Get("/auth/:provider/callback", s.authCallbackHandler)
+	s.Post("/send-email", s.sendEmailHandler)
+	s.Get("/verify-email/:token", s.verifyEmailHandler)
+	s.Post("/resend-email", s.resendEmailHandler)
+
 }
 
 func (s *FiberServer) healthHandler(c *fiber.Ctx) error {
@@ -137,3 +146,80 @@ func (s *FiberServer) dashboardHandler(c *fiber.Ctx) error {
 	return adaptor.HTTPHandler(templ.Handler(web.DashboardPage(user.(map[string]string))))(c)
 }
 
+func generateToken() string {
+	b := make([]byte, 32)
+	_, err := rand.Read(b)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return base64.URLEncoding.EncodeToString(b)
+}
+
+func (s *FiberServer) sendEmailHandler(c *fiber.Ctx) error {
+	email := c.FormValue("email")
+	if email == "" {
+		return c.Status(http.StatusBadRequest).SendString("Email is required")
+	}
+
+	token := generateToken()
+	emailTokens[token] = email
+
+	link := fmt.Sprintf("http://localhost:3000/verify-email/%s", token)
+	html := fmt.Sprintf("<p>Click <a href='%s'>here</a> to sign in.</p>", link)
+
+	err := sendEmail(email, "Sign In Link", html)
+	if err != nil {
+		log.Println(err)
+		return c.Status(http.StatusInternalServerError).SendString("Failed to send email")
+	}
+
+	return c.Render("email_sent", fiber.Map{
+		"email": email,
+	})
+}
+
+func (s *FiberServer) verifyEmailHandler(c *fiber.Ctx) error {
+	token := c.Params("token")
+	email, exists := emailTokens[token]
+	if !exists {
+		return c.Status(http.StatusUnauthorized).SendString("Invalid or expired token")
+	}
+
+	// Log the user in (store session)
+	sess := store.Get(c)
+	sess.Set("user", map[string]string{"Email": email})
+	err := sess.Save()
+	if err != nil {
+		log.Println(err)
+		return c.Status(http.StatusInternalServerError).SendString("Failed to log in")
+	}
+
+	// Remove the token after use
+	delete(emailTokens, token)
+
+	return c.Redirect("/dashboard")
+}
+
+func (s *FiberServer) resendEmailHandler(c *fiber.Ctx) error {
+	email := c.FormValue("email")
+	if email == "" {
+		return c.Status(http.StatusBadRequest).SendString("Email is required")
+	}
+
+	// Generate a new token and send the email
+	token := generateToken()
+	emailTokens[token] = email
+
+	link := fmt.Sprintf("http://localhost:3000/verify-email/%s", token)
+	html := fmt.Sprintf("<p>Click <a href='%s'>here</a> to sign in.</p>", link)
+
+	err := sendEmail(email, "Resend Sign In Link", html)
+	if err != nil {
+		log.Println(err)
+		return c.Status(http.StatusInternalServerError).SendString("Failed to resend email")
+	}
+
+	return c.Render("email_sent", fiber.Map{
+		"email": email,
+	})
+}
