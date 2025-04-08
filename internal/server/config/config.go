@@ -31,8 +31,10 @@ type Config struct {
 	// OAuth configuration
 	GoogleOAuthClientID     string `env:"GOOGLE_OAUTH_CLIENT_ID"`
 	GoogleOAuthClientSecret string `env:"GOOGLE_OAUTH_CLIENT_SECRET"`
+	GoogleOAuthCallbackUrl  string `env:"GOOGLE_OAUTH_CALLBACK_URL,required"`
 	GitHubOAuthClientID     string `env:"GITHUB_OAUTH_CLIENT_ID"`
 	GitHubOAuthClientSecret string `env:"GITHUB_OAUTH_CLIENT_SECRET"`
+	GitHubOAuthCallbackUrl  string `env:"GITHUB_OAUTH_CALLBACK_URL,required"`
 
 	// Email configuration
 	EmailAPIURL         string `env:"EMAIL_API_URL" envDefault:"https://api.resend.com/emails"`

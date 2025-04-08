@@ -12,9 +12,6 @@ import (
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/markbates/goth"
-	"github.com/markbates/goth/providers/github"
-	"github.com/markbates/goth/providers/google"
 )
 
 func gracefulShutdown(fiberServer *server.FiberServer, done chan bool) {
@@ -37,18 +34,6 @@ func gracefulShutdown(fiberServer *server.FiberServer, done chan bool) {
 
 func main() {
 	// Initialize Goth with OAuth providers
-	goth.UseProviders(
-		google.New(
-			os.Getenv("GOOGLE_OAUTH_CLIENT_ID"),
-			os.Getenv("GOOGLE_OAUTH_CLIENT_SECRET"),
-			os.Getenv("GOOGLE_OAUTH_CALLBACK_URL"),
-		),
-		github.New(
-			os.Getenv("GITHUB_OAUTH_CLIENT_ID"),
-			os.Getenv("GITHUB_OAUTH_CLIENT_SECRET"),
-			os.Getenv("GITHUB_OAUTH_CALLBACK_URL"),
-		),
-	)
 
 	server := server.New()
 
