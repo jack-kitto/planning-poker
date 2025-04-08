@@ -18,7 +18,7 @@ func (h *Handlers) DashboardHandler(c *fiber.Ctx) error {
 	}
 
 	// Convert the user map to map[string]string
-	userMap, ok := user.(map[string]interface{})
+	userMap, ok := user.(map[string]any)
 	if !ok {
 		return c.Status(http.StatusInternalServerError).SendString("Invalid user data")
 	}
