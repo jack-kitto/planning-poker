@@ -1,4 +1,3 @@
-// internal/server/handlers/auth.go
 package handlers
 
 import (

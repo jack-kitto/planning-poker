@@ -4,6 +4,7 @@ go 1.23.0
 
 require (
 	github.com/a-h/templ v0.3.857
+	github.com/caarlos0/env/v11 v11.3.1
 	github.com/gofiber/contrib/websocket v1.3.3
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/gofiber/session/v2 v2.0.2
