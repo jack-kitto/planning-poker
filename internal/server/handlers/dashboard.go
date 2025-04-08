@@ -17,5 +17,20 @@ func (h *Handlers) DashboardHandler(c *fiber.Ctx) error {
 		return c.Status(http.StatusUnauthorized).SendString("Unauthorized")
 	}
 
-	return adaptor.HTTPHandler(templ.Handler(web.DashboardPage(user.(map[string]string))))(c)
+	// Convert the user map to map[string]string
+	userMap, ok := user.(map[string]interface{})
+	if !ok {
+		return c.Status(http.StatusInternalServerError).SendString("Invalid user data")
+	}
+
+	convertedUser := make(map[string]string)
+	for key, value := range userMap {
+		strValue, ok := value.(string)
+		if !ok {
+			return c.Status(http.StatusInternalServerError).SendString("Invalid user data")
+		}
+		convertedUser[key] = strValue
+	}
+
+	return adaptor.HTTPHandler(templ.Handler(web.DashboardPage(convertedUser)))(c)
 }
