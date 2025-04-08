@@ -51,7 +51,6 @@ func main() {
 	)
 
 	server := server.New()
-	server.RegisterFiberRoutes()
 
 	done := make(chan bool, 1)
 

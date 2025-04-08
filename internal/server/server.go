@@ -2,6 +2,9 @@ package server
 
 import (
 	"planning-poker/internal/database"
+	"planning-poker/internal/server/config"
+	"planning-poker/internal/server/handlers"
+	"planning-poker/internal/server/routes"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -21,6 +24,12 @@ func New() *FiberServer {
 
 		db: database.New(),
 	}
+
+	// Initialize handlers with dependencies
+	handlers := handlers.NewHandlers(server.db, config.Store)
+
+	// Register routes
+	routes.RegisterFiberRoutes(server.App, handlers)
 
 	return server
 }
