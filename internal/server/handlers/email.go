@@ -137,19 +137,21 @@ func (h *Handlers) VerifyEmailHandler(c *fiber.Ctx) error {
 func (h *Handlers) ResendEmailHandler(c *fiber.Ctx) error {
 	email := c.FormValue("email")
 	if email == "" {
-		return c.Status(http.StatusBadRequest).SendString("Email is required")
+		return c.Status(fiber.StatusBadRequest).SendString("Email is required")
 	}
 
 	token := utils.GenerateToken()
-	config.EmailTokens[token] = email
+	config.EmailTokens[token] = email // Consider thread-safety here if concurrent access is possible.
 
 	link := fmt.Sprintf("%s/verify-email/%s", h.Config.BaseURL, token)
 
-	// Send the email
-	err := h.sendEmail(email, "Verify Your Email", link)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).SendString("Failed to send email")
-	}
+	// Send the email asynchronously
+	go func() {
+		err := h.sendEmail(email, "Verify Your Email", link)
+		if err != nil {
+			log.Printf("Failed to send email: %v", err)
+		}
+	}()
 
 	return adaptor.HTTPHandler(templ.Handler(web.EmailSentPage(email)))(c)
 }

@@ -9,7 +9,7 @@ templ EmailSentPage(email string) {
 					We sent an email to <strong>{ email }</strong>. Please check your inbox.
 				</p>
 				<form method="POST" action="/resend-email">
-					<input type="hidden" name="email" value="@{email}"/>
+					<input type="hidden" name="email" value={ email }/>
 					<button
 						type="submit"
 						class="w-full bg-gray-900 text-white mt-4 py-2 rounded-md hover:bg-gray-800"
