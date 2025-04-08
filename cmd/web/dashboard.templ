@@ -1,113 +1,110 @@
-// cmd/web/dashboard.templ
 package web
 
 templ DashboardPage(user map[string]string) {
-	@LandingTemplate() {
-		<div class="w-full h-full bg-gray-900 text-white flex flex-col items-center">
-			<!-- Dashboard Header -->
-			<header class="w-full py-6 bg-gray-800 flex justify-between px-8">
-				<h1 class="text-3xl font-bold tracking-wide">Grug Dashboard</h1>
-				<div class="flex items-center gap-4">
-					<span class="text-gray-300">Welcome, { user["Name"] }</span>
-					<a href="/logout" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg">
-						Logout
-					</a>
-				</div>
-			</header>
-			<!-- Dashboard Content -->
-			<div class="w-full max-w-6xl p-8">
-				<div class="bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
-					<h2 class="text-2xl font-bold mb-4">Grug's Planning Sessions</h2>
-					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-						<!-- Recent Sessions -->
-						<div class="bg-gray-700 rounded-lg p-4">
-							<h3 class="text-xl font-semibold mb-3">Recent Sessions</h3>
-							<div class="space-y-3">
-								<div class="bg-gray-600 p-3 rounded flex justify-between items-center">
-									<div>
-										<div class="font-medium">Sprint Planning #42</div>
-										<div class="text-sm text-gray-400">Created 2 days ago</div>
-									</div>
-									<a href="#" class="bg-indigo-500 hover:bg-indigo-600 text-white text-sm py-1 px-3 rounded">
-										Join
-									</a>
+	<div class="w-full h-full bg-gray-900 text-white flex flex-col items-center">
+		<!-- Dashboard Header -->
+		<header class="w-full py-6 bg-gray-800 flex justify-between px-8">
+			<h1 class="text-3xl font-bold tracking-wide">Grug Dashboard</h1>
+			<div class="flex items-center gap-4">
+				<span class="text-gray-300">Welcome, { user["Name"] }</span>
+				<a href="/logout" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg">
+					Logout
+				</a>
+			</div>
+		</header>
+		<!-- Dashboard Content -->
+		<div class="w-full max-w-6xl p-8">
+			<div class="bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+				<h2 class="text-2xl font-bold mb-4">Grug's Planning Sessions</h2>
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+					<!-- Recent Sessions -->
+					<div class="bg-gray-700 rounded-lg p-4">
+						<h3 class="text-xl font-semibold mb-3">Recent Sessions</h3>
+						<div class="space-y-3">
+							<div class="bg-gray-600 p-3 rounded flex justify-between items-center">
+								<div>
+									<div class="font-medium">Sprint Planning #42</div>
+									<div class="text-sm text-gray-400">Created 2 days ago</div>
 								</div>
-								<div class="bg-gray-600 p-3 rounded flex justify-between items-center">
-									<div>
-										<div class="font-medium">Bug Estimation</div>
-										<div class="text-sm text-gray-400">Created 5 days ago</div>
-									</div>
-									<a href="#" class="bg-indigo-500 hover:bg-indigo-600 text-white text-sm py-1 px-3 rounded">
-										Join
-									</a>
+								<a href="#" class="bg-indigo-500 hover:bg-indigo-600 text-white text-sm py-1 px-3 rounded">
+									Join
+								</a>
+							</div>
+							<div class="bg-gray-600 p-3 rounded flex justify-between items-center">
+								<div>
+									<div class="font-medium">Bug Estimation</div>
+									<div class="text-sm text-gray-400">Created 5 days ago</div>
 								</div>
+								<a href="#" class="bg-indigo-500 hover:bg-indigo-600 text-white text-sm py-1 px-3 rounded">
+									Join
+								</a>
 							</div>
 						</div>
-						<!-- Create New Session -->
-						<div class="bg-gray-700 rounded-lg p-4">
-							<h3 class="text-xl font-semibold mb-3">Create New Session</h3>
-							<form class="space-y-4">
-								<div>
-									<label class="block text-sm font-medium text-gray-400 mb-1">
-										Session Name
-									</label>
-									<input
-										type="text"
-										placeholder="e.g., Sprint Planning"
-										class="w-full px-3 py-2 rounded-lg bg-gray-600 text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-									/>
-								</div>
-								<div>
-									<label class="block text-sm font-medium text-gray-400 mb-1">
-										Estimation Type
-									</label>
-									<select class="w-full px-3 py-2 rounded-lg bg-gray-600 text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-										<option>Fibonacci (1, 2, 3, 5, 8, 13, 21)</option>
-										<option>T-Shirt Sizes (XS, S, M, L, XL)</option>
-										<option>Powers of 2 (1, 2, 4, 8, 16, 32)</option>
-									</select>
-								</div>
-								<button
-									type="submit"
-									class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg w-full"
-								>
-									Create Session
-								</button>
-							</form>
-						</div>
+					</div>
+					<!-- Create New Session -->
+					<div class="bg-gray-700 rounded-lg p-4">
+						<h3 class="text-xl font-semibold mb-3">Create New Session</h3>
+						<form class="space-y-4">
+							<div>
+								<label class="block text-sm font-medium text-gray-400 mb-1">
+									Session Name
+								</label>
+								<input
+									type="text"
+									placeholder="e.g., Sprint Planning"
+									class="w-full px-3 py-2 rounded-lg bg-gray-600 text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+								/>
+							</div>
+							<div>
+								<label class="block text-sm font-medium text-gray-400 mb-1">
+									Estimation Type
+								</label>
+								<select class="w-full px-3 py-2 rounded-lg bg-gray-600 text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+									<option>Fibonacci (1, 2, 3, 5, 8, 13, 21)</option>
+									<option>T-Shirt Sizes (XS, S, M, L, XL)</option>
+									<option>Powers of 2 (1, 2, 4, 8, 16, 32)</option>
+								</select>
+							</div>
+							<button
+								type="submit"
+								class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg w-full"
+							>
+								Create Session
+							</button>
+						</form>
 					</div>
 				</div>
-				<!-- Integration Section -->
-				<div class="bg-gray-800 rounded-lg shadow-lg p-6">
-					<h2 class="text-2xl font-bold mb-4">Grug's Integrations</h2>
-					<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-						<div class="bg-gray-700 p-4 rounded-lg flex flex-col items-center">
-							<img src="https://jira.atlassian.com/images/atlassian-jira-logo-large.png" alt="Jira" class="h-12 mb-3"/>
-							<h3 class="font-semibold mb-2">Jira</h3>
-							<p class="text-sm text-gray-400 text-center mb-3">Connect to import and update Jira issues</p>
-							<button class="bg-blue-500 hover:bg-blue-600 text-white text-sm py-1 px-3 rounded w-full">
-								Connect
-							</button>
-						</div>
-						<div class="bg-gray-700 p-4 rounded-lg flex flex-col items-center">
-							<img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" class="h-12 mb-3"/>
-							<h3 class="font-semibold mb-2">GitHub</h3>
-							<p class="text-sm text-gray-400 text-center mb-3">Connect to import issues from GitHub</p>
-							<button class="bg-gray-900 hover:bg-gray-800 text-white text-sm py-1 px-3 rounded w-full">
-								Connect
-							</button>
-						</div>
-						<div class="bg-gray-700 p-4 rounded-lg flex flex-col items-center">
-							<img src="https://cdn.worldvectorlogo.com/logos/slack-new-logo.svg" alt="Slack" class="h-12 mb-3"/>
-							<h3 class="font-semibold mb-2">Slack</h3>
-							<p class="text-sm text-gray-400 text-center mb-3">Connect to send notifications to Slack</p>
-							<button class="bg-purple-500 hover:bg-purple-600 text-white text-sm py-1 px-3 rounded w-full">
-								Connect
-							</button>
-						</div>
+			</div>
+			<!-- Integration Section -->
+			<div class="bg-gray-800 rounded-lg shadow-lg p-6">
+				<h2 class="text-2xl font-bold mb-4">Grug's Integrations</h2>
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+					<div class="bg-gray-700 p-4 rounded-lg flex flex-col items-center">
+						<img src="https://jira.atlassian.com/images/atlassian-jira-logo-large.png" alt="Jira" class="h-12 mb-3"/>
+						<h3 class="font-semibold mb-2">Jira</h3>
+						<p class="text-sm text-gray-400 text-center mb-3">Connect to import and update Jira issues</p>
+						<button class="bg-blue-500 hover:bg-blue-600 text-white text-sm py-1 px-3 rounded w-full">
+							Connect
+						</button>
+					</div>
+					<div class="bg-gray-700 p-4 rounded-lg flex flex-col items-center">
+						<img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" class="h-12 mb-3"/>
+						<h3 class="font-semibold mb-2">GitHub</h3>
+						<p class="text-sm text-gray-400 text-center mb-3">Connect to import issues from GitHub</p>
+						<button class="bg-gray-900 hover:bg-gray-800 text-white text-sm py-1 px-3 rounded w-full">
+							Connect
+						</button>
+					</div>
+					<div class="bg-gray-700 p-4 rounded-lg flex flex-col items-center">
+						<img src="https://cdn.worldvectorlogo.com/logos/slack-new-logo.svg" alt="Slack" class="h-12 mb-3"/>
+						<h3 class="font-semibold mb-2">Slack</h3>
+						<p class="text-sm text-gray-400 text-center mb-3">Connect to send notifications to Slack</p>
+						<button class="bg-purple-500 hover:bg-purple-600 text-white text-sm py-1 px-3 rounded w-full">
+							Connect
+						</button>
 					</div>
 				</div>
 			</div>
 		</div>
-	}
+	</div>
 }
