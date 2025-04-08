@@ -101,7 +101,7 @@ func (h *Handlers) SendEmailHandler(c *fiber.Ctx) error {
 	token := utils.GenerateToken()
 	config.EmailTokens[token] = email // Consider thread-safety here if concurrent access is possible.
 
-	link := fmt.Sprintf("http://%s/verify-email/%s", h.Config.BaseURL, token)
+	link := fmt.Sprintf("%s/verify-email/%s", h.Config.BaseURL, token)
 
 	// Send the email
 	err := h.sendEmail(email, "Verify Your Email", link)
@@ -141,7 +141,7 @@ func (h *Handlers) ResendEmailHandler(c *fiber.Ctx) error {
 	token := utils.GenerateToken()
 	config.EmailTokens[token] = email
 
-	link := fmt.Sprintf("http://%s/verify-email/%s", h.Config.BaseURL, token)
+	link := fmt.Sprintf("%s/verify-email/%s", h.Config.BaseURL, token)
 
 	// Send the email
 	err := h.sendEmail(email, "Verify Your Email", link)
