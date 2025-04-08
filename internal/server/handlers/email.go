@@ -103,11 +103,13 @@ func (h *Handlers) SendEmailHandler(c *fiber.Ctx) error {
 
 	link := fmt.Sprintf("%s/verify-email/%s", h.Config.BaseURL, token)
 
-	// Send the email
-	err := h.sendEmail(email, "Verify Your Email", link)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).SendString("Failed to send email")
-	}
+	// Send the email asynchronously
+	go func() {
+		err := h.sendEmail(email, "Verify Your Email", link)
+		if err != nil {
+			log.Printf("Failed to send email: %v", err)
+		}
+	}()
 
 	return adaptor.HTTPHandler(templ.Handler(web.EmailSentPage(email)))(c)
 }
