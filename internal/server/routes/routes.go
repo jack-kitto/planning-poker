@@ -25,6 +25,11 @@ func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
 		MaxAge:           300,
 	}))
 
+	app.Use("/favicons", filesystem.New(filesystem.Config{
+		Root:       http.FS(web.Files),
+		PathPrefix: "assets/favicons",
+		Browse:     false,
+	}))
 	// Basic routes
 	app.Get("/", adaptor.HTTPHandler(templ.Handler(web.LandingPage())))
 	app.Get("/login", adaptor.HTTPHandler(templ.Handler(web.LoginPage())))
