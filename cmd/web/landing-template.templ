@@ -1,14 +1,8 @@
 package web
 
 templ LandingTemplate() {
-	<!DOCTYPE html>
-	<html lang="en" class="h-full">
-		<head>
-			<meta charset="utf-8"/>
-			<meta name="viewport" content="width=device-width,initial-scale=1"/>
-			<title>Planning Poker App</title>
-			<link href="assets/css/output.css" rel="stylesheet"/>
-			<script src="assets/js/htmx.min.js"></script>
+	@Base() {
+		<main class="h-full">
 			<style>
 				/* Ensure the background covers the entire document */
 				html, body {
@@ -111,28 +105,28 @@ templ LandingTemplate() {
 					}
 				}
 			</style>
-		</head>
-		<body class="h-full w-full bg-[#191A21]">
-			<main class="h-full">
-				<div class="w-screen h-screen">
-					<!-- Navbar -->
-					<nav class="navbar">
-						<div class="navbar-logo">Planning Poker</div>
-						<div class="navbar-links">
-							<a href="/login" class="navbar-link">Login</a>
-							<a href="/register" class="navbar-link">Register</a>
-							<a href="https://github.com/jack-kitto/planning-poker" class="navbar-github">
-								<img src="https://gyazo.com/85e7ce9196ae635161fec921602903a7/max_size/1000" alt="GitHub Logo"/>
-								<span>GitHub</span>
-							</a>
-						</div>
-					</nav>
-					<!-- Main Content Area -->
-					<div class="h-full w-full">
-						{ children... }
+			<div class="w-screen h-screen">
+				<!-- Navbar -->
+				<nav class="navbar">
+					<div class="navbar-logo">
+						<a href="/">
+							<img src="/assets/icons/logo-full-light.svg" alt="Planning Poker Icon" class="w-20 hr-2"/>
+						</a>
 					</div>
+					<div class="navbar-links">
+						<a href="/login" class="navbar-link">Login</a>
+						<a href="/register" class="navbar-link">Register</a>
+						<a href="https://github.com/jack-kitto/planning-poker" class="navbar-github">
+							<img src="https://gyazo.com/85e7ce9196ae635161fec921602903a7/max_size/1000" alt="GitHub Logo"/>
+							<span>GitHub</span>
+						</a>
+					</div>
+				</nav>
+				<!-- Main Content Area -->
+				<div class="h-full w-full">
+					{ children... }
 				</div>
-			</main>
-		</body>
-	</html>
+			</div>
+		</main>
+	}
 }
