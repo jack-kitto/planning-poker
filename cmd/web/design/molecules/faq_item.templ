@@ -1,0 +1,12 @@
+package molecules
+
+import "planning-poker/cmd/web/design"
+
+templ FAQItem(question string, answer string) {
+	<div>
+		<h4 class={ "text-xl font-semibold text-" + design.Colors.Accent }>{ question }</h4>
+		<p class={ design.Colors.Text.Secondary }>
+			{ answer }
+		</p>
+	</div>
+}

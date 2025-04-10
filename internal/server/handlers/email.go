@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"planning-poker/cmd/web"
+	"planning-poker/cmd/web/pages"
 	"planning-poker/internal/server/config"
 	"planning-poker/internal/server/utils"
 	"time"
@@ -111,7 +111,7 @@ func (h *Handlers) SendEmailHandler(c *fiber.Ctx) error {
 		}
 	}()
 
-	return adaptor.HTTPHandler(templ.Handler(web.EmailSentPage(email)))(c)
+	return adaptor.HTTPHandler(templ.Handler(pages.EmailSentPage(email)))(c)
 }
 
 func (h *Handlers) VerifyEmailHandler(c *fiber.Ctx) error {
@@ -153,5 +153,5 @@ func (h *Handlers) ResendEmailHandler(c *fiber.Ctx) error {
 		}
 	}()
 
-	return adaptor.HTTPHandler(templ.Handler(web.EmailSentPage(email)))(c)
+	return adaptor.HTTPHandler(templ.Handler(pages.EmailSentPage(email)))(c)
 }

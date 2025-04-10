@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"net/http"
-	"planning-poker/cmd/web"
+	"planning-poker/cmd/web/pages"
 
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
@@ -32,5 +32,5 @@ func (h *Handlers) DashboardHandler(c *fiber.Ctx) error {
 		convertedUser[key] = strValue
 	}
 
-	return adaptor.HTTPHandler(templ.Handler(web.DashboardPage(convertedUser)))(c)
+	return adaptor.HTTPHandler(templ.Handler(pages.DashboardPage(convertedUser)))(c)
 }

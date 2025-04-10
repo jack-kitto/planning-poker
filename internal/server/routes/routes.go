@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"planning-poker/cmd/web"
+	"planning-poker/cmd/web/pages"
 	"planning-poker/internal/server/handlers"
 	"planning-poker/internal/server/middleware"
 
@@ -31,9 +32,9 @@ func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
 		Browse:     false,
 	}))
 	// Basic routes
-	app.Get("/", adaptor.HTTPHandler(templ.Handler(web.LandingPage())))
-	app.Get("/login", adaptor.HTTPHandler(templ.Handler(web.LoginPage())))
-	app.Get("/register", adaptor.HTTPHandler(templ.Handler(web.SignUpPage())))
+	app.Get("/", adaptor.HTTPHandler(templ.Handler(pages.LandingPage())))
+	app.Get("/login", adaptor.HTTPHandler(templ.Handler(pages.LoginPage())))
+	app.Get("/register", adaptor.HTTPHandler(templ.Handler(pages.SignUpPage())))
 	app.Get("/dashboard", middleware.ProtectedMiddleware(handlers.Store), handlers.DashboardHandler)
 
 	// Health check

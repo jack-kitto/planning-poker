@@ -16,7 +16,7 @@ templ EmailSentPage(email string) {
 				</p>
 				<form method="POST" action="/resend-email">
 					<input type="hidden" name="email" value={ email }/>
-					@atoms.Button(atoms.ButtonPrimary, atoms.ButtonMedium, true, templ.ComponentScript{}) {
+					@atoms.Button(atoms.ButtonSecondary, atoms.ButtonMedium, true, templ.ComponentScript{}) {
 						Resend Email
 					}
 				</form>
