@@ -1,0 +1,33 @@
+package atoms
+
+import "planning-poker/cmd/web/design"
+
+templ H1() {
+	<h1 class={ design.Typography.Heading.H1 }>
+		{ children... }
+	</h1>
+}
+
+templ H2() {
+	<h2 class={ design.Typography.Heading.H2 }>
+		{ children... }
+	</h2>
+}
+
+templ H3() {
+	<h3 class={ design.Typography.Heading.H3 }>
+		{ children... }
+	</h3>
+}
+
+templ H4() {
+	<h4 class={ design.Typography.Heading.H4 }>
+		{ children... }
+	</h4>
+}
+
+templ Text(size string, color string) {
+	<p class={ size + " " + color }>
+		{ children... }
+	</p>
+}

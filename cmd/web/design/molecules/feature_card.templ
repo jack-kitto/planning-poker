@@ -1,0 +1,16 @@
+package molecules
+
+import "planning-poker/cmd/web/design/atoms"
+import "planning-poker/cmd/web/design"
+
+templ FeatureCard(icon string) {
+	<div class="flex flex-col items-center">
+		<div class={ "text-" + design.Colors.Accent + " text-4xl mb-4" }>{ icon }</div>
+		@atoms.H4() {
+			{ children... }
+		}
+		<p class={ design.Typography.Body.Medium + " " + design.Colors.Text.Secondary }>
+			<slot name="description"></slot>
+		</p>
+	</div>
+}

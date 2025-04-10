@@ -1,0 +1,27 @@
+// cmd/web/design/organisms/header.templ
+package organisms
+
+import "planning-poker/cmd/web/design/atoms"
+import "planning-poker/cmd/web/design"
+
+templ Header(title string) {
+	<header class={ "w-full py-6 " + design.Colors.Background.Paper + " flex justify-center" }>
+		@atoms.H1() {
+			{ title }
+		}
+	</header>
+}
+
+templ DashboardHeader(userName string) {
+	<header class="w-full py-6 bg-gray-800 flex justify-between px-8">
+		@atoms.H1() {
+			Grug Dashboard
+		}
+		<div class="flex items-center gap-4">
+			<span class="text-gray-300">Welcome, { userName }</span>
+			@atoms.ButtonLink("/logout", atoms.ButtonDanger, atoms.ButtonMedium, false) {
+				Logout
+			}
+		</div>
+	</header>
+}

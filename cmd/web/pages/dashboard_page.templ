@@ -1,0 +1,84 @@
+// cmd/web/pages/dashboard_page.templ
+package pages
+
+import "planning-poker/cmd/web/design/templates"
+import "planning-poker/cmd/web/design/organisms"
+import "planning-poker/cmd/web/design/atoms"
+import "planning-poker/cmd/web/design/molecules"
+
+templ DashboardPage(user map[string]string) {
+	@templates.DashTemplate() {
+		<div class="w-full h-full bg-gray-900 text-white flex flex-col items-center">
+			<!-- Dashboard Header -->
+			@organisms.DashboardHeader(user["Name"])
+			<!-- Dashboard Content -->
+			<div class="w-full max-w-6xl p-8">
+				@atoms.Card("bg-gray-800", "p-6 mb-8") {
+					@atoms.H2() {
+						Grug's Planning Sessions
+					}
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<!-- Recent Sessions -->
+						@atoms.Card("bg-gray-700", "p-4") {
+							@atoms.H3() {
+								Recent Sessions
+							}
+							<div class="space-y-3">
+								<div class="bg-gray-600 p-3 rounded flex justify-between items-center">
+									<div>
+										<div class="font-medium">Sprint Planning #42</div>
+										<div class="text-sm text-gray-400">Created 2 days ago</div>
+									</div>
+									@atoms.ButtonLink("#", atoms.ButtonPrimary, atoms.ButtonSmall, false) {
+										Join
+									}
+								</div>
+								<div class="bg-gray-600 p-3 rounded flex justify-between items-center">
+									<div>
+										<div class="font-medium">Bug Estimation</div>
+										<div class="text-sm text-gray-400">Created 5 days ago</div>
+									</div>
+									@atoms.ButtonLink("#", atoms.ButtonPrimary, atoms.ButtonSmall, false) {
+										Join
+									}
+								</div>
+							</div>
+						}
+						<!-- Create New Session -->
+						@atoms.Card("bg-gray-700", "p-4") {
+							@atoms.H3() {
+								Create New Session
+							}
+							<form class="space-y-4">
+								@molecules.FormField("session-name", "session-name", "text", "Session Name", "e.g., Sprint Planning", true)
+								@molecules.FormSelect("estimation-type", "estimation-type", "Estimation Type", true) {
+									@atoms.Option("fibonacci", false) {
+										Fibonacci (1, 2, 3, 5, 8, 13, 21)
+									}
+									@atoms.Option("tshirt", false) {
+										T-Shirt Sizes (XS, S, M, L, XL)
+									}
+									@atoms.Option("powers", false) {
+										Powers of 2 (1, 2, 4, 8, 16, 32)
+									}
+								}
+								@atoms.Button(atoms.ButtonPrimary, atoms.ButtonMedium, true, templ.ComponentScript{}) {
+									Create Session
+								}
+							</form>
+						}
+					</div>
+				}
+				<!-- Integration Section -->
+				@atoms.Card("bg-gray-800", "p-6") {
+					@atoms.H2() {
+						Grug's Integrations
+					}
+					<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+						<!-- Integration cards... -->
+					</div>
+				}
+			</div>
+		</div>
+	}
+}

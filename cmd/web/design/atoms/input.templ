@@ -1,0 +1,37 @@
+package atoms
+
+import "planning-poker/cmd/web/design"
+
+templ Input(id string, name string, type_ string, placeholder string, required bool) {
+	<input
+		id={ id }
+		name={ name }
+		type={ type_ }
+		placeholder={ placeholder }
+		required?={ required }
+		class={ "w-full px-3 py-2 " + design.BorderRadius.Medium + " bg-gray-600 text-gray-300 focus:outline-none focus:ring-2 focus:ring-" + design.Colors.Primary }
+	/>
+}
+
+templ Select(id string, name string, required bool) {
+	<select
+		id={ id }
+		name={ name }
+		required?={ required }
+		class={ "w-full px-3 py-2 " + design.BorderRadius.Medium + " bg-gray-600 text-gray-300 focus:outline-none focus:ring-2 focus:ring-" + design.Colors.Primary }
+	>
+		{ children... }
+	</select>
+}
+
+templ Option(value string, selected bool) {
+	<option value={ value } selected?={ selected }>
+		{ children... }
+	</option>
+}
+
+templ Label(for_ string) {
+	<label for={ for_ } class="block text-sm font-medium text-gray-400 mb-1">
+		{ children... }
+	</label>
+}

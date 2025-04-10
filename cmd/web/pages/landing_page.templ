@@ -1,0 +1,60 @@
+// cmd/web/pages/landing_page.templ
+package pages
+
+import "planning-poker/cmd/web/design/templates"
+import "planning-poker/cmd/web/design/organisms"
+import "planning-poker/cmd/web/design/molecules"
+import "planning-poker/cmd/web/design/atoms"
+import "planning-poker/cmd/web/design"
+
+templ LandingPage() {
+	@templates.LandingTemplate() {
+		<div class="w-full h-full bg-gray-900 text-white flex flex-col items-center">
+			<script>
+                function handleLogin(event) {
+                  window.location.href = '/register';
+                }
+            </script>
+			<!-- Header Section -->
+			@organisms.Header("Grug Planning Poker")
+			<!-- Hero Section -->
+			@organisms.Hero(
+				"Grug Make Planning Easy",
+				"Grug Smash Complicated Tools",
+				"Grug tired of big-brain planning apps. Grug make simple tool for team to plan fast. Grug say: \"Planning should be easy, like smashing rock!\" Grug also share tool with cave friends. Open source on GitHub!",
+				"Grug Say: \"Click Here to Start Planning!\"",
+				"/register",
+			)
+			<!-- Key Features Section -->
+			<section class={ "py-16 px-6 " + design.Colors.Background.Paper + " w-full" }>
+				<div class="max-w-4xl mx-auto text-center">
+					@atoms.H3() {
+						Why Grug Tool Best?
+					}
+					<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+						@molecules.FeatureCard("🪨") {
+							Simple Like Rock
+							<p slot="description">
+								Grug make tool simple. No big-brain features. Just plan fast, smash sprint.
+							</p>
+						}
+						@molecules.FeatureCard("🔗") {
+							Grug Connect Tools
+							<p slot="description">
+								Grug smart. Grug connect to Jira, GitHub, and other big-brain tools. Easy for cave team.
+							</p>
+						}
+						@molecules.FeatureCard("🔥") {
+							Grug Automate
+							<p slot="description">
+								Grug make tool do boring stuff. Grug save time. Grug happy.
+							</p>
+						}
+					</div>
+				</div>
+			</section>
+			<!-- Rest of the page content... -->
+			<!-- (Simplified for brevity) -->
+		</div>
+	}
+}

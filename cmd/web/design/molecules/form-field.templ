@@ -1,0 +1,23 @@
+package molecules
+
+import "planning-poker/cmd/web/design/atoms"
+
+templ FormField(id string, name string, type_ string, label string, placeholder string, required bool) {
+	<div class="mb-4">
+		@atoms.Label(id) {
+			{ label }
+		}
+		@atoms.Input(id, name, type_, placeholder, required)
+	</div>
+}
+
+templ FormSelect(id string, name string, label string, required bool) {
+	<div class="mb-4">
+		@atoms.Label(id) {
+			{ label }
+		}
+		@atoms.Select(id, name, required) {
+			{ children... }
+		}
+	</div>
+}

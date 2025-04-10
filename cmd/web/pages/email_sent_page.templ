@@ -1,0 +1,26 @@
+// cmd/web/pages/email_sent_page.templ
+package pages
+
+import "planning-poker/cmd/web/design/templates"
+import "planning-poker/cmd/web/design/atoms"
+
+templ EmailSentPage(email string) {
+	@templates.LandingTemplate() {
+		<div class="w-full h-screen flex flex-col items-center justify-center bg-gray-900">
+			<section class="w-full max-w-sm bg-white shadow-md rounded-lg p-6 text-center">
+				@atoms.H1() {
+					Check your email
+				}
+				<p class="text-gray-600 text-sm mb-4">
+					We sent an email to <strong>{ email }</strong>. Please check your inbox.
+				</p>
+				<form method="POST" action="/resend-email">
+					<input type="hidden" name="email" value={ email }/>
+					@atoms.Button(atoms.ButtonPrimary, atoms.ButtonMedium, true, templ.ComponentScript{}) {
+						Resend Email
+					}
+				</form>
+			</section>
+		</div>
+	}
+}

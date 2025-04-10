@@ -1,0 +1,45 @@
+// cmd/web/design/organisms/auth_form.templ
+package organisms
+
+import "planning-poker/cmd/web/design/atoms"
+import "planning-poker/cmd/web/design/molecules"
+
+templ AuthForm(title string, subtitle string, action templ.SafeURL, buttonText string, isLogin bool) {
+	<section class="w-full max-w-sm bg-white shadow-md rounded-lg p-6 text-center">
+		@atoms.H1() {
+			{ title }
+		}
+		<p class="text-gray-600 text-sm mb-4">{ subtitle }</p>
+		<!-- Social Sign-In Buttons -->
+		<div class="flex flex-col gap-3">
+			<a href="/auth/github" class="flex items-center justify-center border border-gray-300 rounded-md py-2">
+				<img src="/assets/icons/github-mark.svg" alt="GitHub Icon" class="w-8 h-8 mr-2"/>
+				GitHub
+			</a>
+		</div>
+		<!-- OR Separator -->
+		<div class="flex items-center my-4">
+			<hr class="w-full border-gray-300"/>
+			<span class="px-2 text-gray-500 text-sm">or</span>
+			<hr class="w-full border-gray-300"/>
+		</div>
+		<!-- Form -->
+		<form method="POST" action={ action } class="text-left">
+			if !isLogin {
+				@molecules.FormField("username", "username", "text", "Name", "Your name", true)
+			}
+			@molecules.FormField("email", "email", "email", "Email address", "Your email", true)
+			@atoms.Button(atoms.ButtonPrimary, atoms.ButtonMedium, true, templ.ComponentScript{}) {
+				{ buttonText }
+			}
+		</form>
+		<!-- Toggle Link -->
+		<p class="text-sm text-gray-600 mt-4">
+			if isLogin {
+				Don't have an account? <a href="/register" class="text-blue-500">Sign up</a>
+			} else {
+				Already have an account? <a href="/login" class="text-blue-500">Sign in</a>
+			}
+		</p>
+	</section>
+}

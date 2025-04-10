@@ -1,0 +1,19 @@
+// cmd/web/pages/register_page.templ
+package pages
+
+import "planning-poker/cmd/web/design/templates"
+import "planning-poker/cmd/web/design/organisms"
+
+templ SignUpPage() {
+	@templates.LandingTemplate() {
+		<div class="w-full h-screen flex flex-col items-center justify-center bg-gray-900">
+			@organisms.AuthForm(
+				"Create your account",
+				"Sign up to start planning",
+				"/send-email",
+				"Send link",
+				false,
+			)
+		</div>
+	}
+}

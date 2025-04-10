@@ -1,0 +1,19 @@
+package atoms
+
+templ Container(maxWidth string) {
+	<div class={ "w-full " + maxWidth + " mx-auto px-4" }>
+		{ children... }
+	</div>
+}
+
+templ Card(bgColor string, padding string) {
+	<div class={ bgColor + " " + padding + " rounded-lg shadow-lg" }>
+		{ children... }
+	</div>
+}
+
+templ Section(padding string) {
+	<section class={ padding + " w-full" }>
+		{ children... }
+	</section>
+}

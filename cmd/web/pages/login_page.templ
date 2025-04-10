@@ -1,0 +1,19 @@
+// cmd/web/pages/login_page.templ
+package pages
+
+import "planning-poker/cmd/web/design/templates"
+import "planning-poker/cmd/web/design/organisms"
+
+templ LoginPage() {
+	@templates.LandingTemplate() {
+		<div class="w-full h-screen flex flex-col items-center justify-center bg-gray-900">
+			@organisms.AuthForm(
+				"Sign in to start",
+				"Welcome back! Please sign in to continue",
+				"/send-email",
+				"Continue",
+				true,
+			)
+		</div>
+	}
+}

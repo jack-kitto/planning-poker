@@ -1,0 +1,12 @@
+// cmd/web/design/templates/dashboard_template.templ
+package templates
+
+templ DashTemplate() {
+	@Base() {
+		<main class="h-full">
+			<div class="w-screen h-screen">
+				{ children... }
+			</div>
+		</main>
+	}
+}
