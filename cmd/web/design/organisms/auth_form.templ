@@ -26,7 +26,7 @@ templ AuthForm(title string, subtitle string, action templ.SafeURL, buttonText s
 		<!-- Form -->
 		<form method="POST" action={ action } class="text-left">
 			@molecules.FormField("email", "email", "email", "Email address", "Your email", true)
-			@atoms.Button(atoms.ButtonPrimary, atoms.ButtonMedium, true, templ.ComponentScript{}) {
+			@atoms.Button(atoms.ButtonSecondary, atoms.ButtonMedium, true, templ.ComponentScript{}) {
 				{ buttonText }
 			}
 		</form>
