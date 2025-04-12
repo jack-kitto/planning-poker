@@ -1,0 +1,25 @@
+package pages
+
+import "planning-poker/cmd/web/design/templates"
+
+templ VerificationSuccessPage() {
+	@templates.DashTemplate() {
+		<div class="container mx-auto mt-10 px-4 text-center">
+			<h1 class="text-2xl font-bold mb-4 text-green-600">Email Verified Successfully!</h1>
+			<p class="mb-6">You can now return to the original tab to continue.</p>
+			<p class="text-gray-600">This tab should close automatically shortly.</p>
+			<button
+				onclick="window.close();"
+				class="mt-4 px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
+			>Close Tab Manually</button>
+		</div>
+		<script>
+            // Attempt to close the window.
+            // This often only works if the window was opened by script (which isn't the case here).
+            // It's worth trying but might not work reliably across all browsers/email clients.
+            setTimeout(() => {
+                window.close();
+            }, 1500); // Try closing after 1.5 seconds
+		</script>
+	}
+}
