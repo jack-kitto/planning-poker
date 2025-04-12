@@ -1,4 +1,3 @@
-// cmd/web/pages/email_sent_page.templ
 package pages
 
 import "planning-poker/cmd/web/design/templates"
@@ -14,7 +13,19 @@ templ EmailSentPage(email string) {
 				<p class="text-gray-600 text-sm mb-4">
 					We sent an email to <strong>{ email }</strong>. Please check your inbox.
 				</p>
-				<form method="POST" action="/resend-email">
+				<div
+					id="auth-status-poller"
+					hx-get="/check-status"
+					hx-trigger="every 2s"
+					hx-swap="none"
+					hx-indicator="#polling-spinner"
+				>
+					<p class="text-gray-500 text-xs mt-4">
+						(Waiting for email verification...)
+						<img id="polling-spinner" src="/assets/img/spinner.svg" class="htmx-indicator inline w-4 h-4 ml-2"/>
+					</p>
+				</div>
+				<form method="POST" action="/resend-email" class="mt-4">
 					<input type="hidden" name="email" value={ email }/>
 					@atoms.Button(atoms.ButtonSecondary, atoms.ButtonMedium, true, templ.ComponentScript{}) {
 						Resend Email
@@ -22,5 +33,13 @@ templ EmailSentPage(email string) {
 				</form>
 			</section>
 		</div>
+		<style>
+            .htmx-indicator{
+                display:none;
+            }
+            .htmx-request.htmx-indicator{
+                display:inline-block; /* Or block, depending on layout */
+            }
+		</style>
 	}
 }
