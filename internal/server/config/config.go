@@ -5,12 +5,6 @@ import (
 	"time"
 
 	"github.com/caarlos0/env/v11"
-	"github.com/gofiber/session/v2"
-)
-
-var (
-	Store       = session.New()
-	EmailTokens = make(map[string]string)
 )
 
 type Config struct {
