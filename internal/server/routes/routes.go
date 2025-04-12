@@ -57,6 +57,7 @@ func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
 	app.Post("/create-account", handlers.CreateAccountSubmitHandler)
 	app.Get("/create-account", handlers.CreateAccountHandler)
 	app.Get("/verify-email/:token", handlers.VerifyEmailHandler)
+	app.Get("/verification-success", adaptor.HTTPHandler(templ.Handler(pages.VerificationSuccessPage())))
 	app.Post("/resend-email", handlers.ResendEmailHandler)
 
 	// Logout route
