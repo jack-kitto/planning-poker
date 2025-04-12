@@ -5,12 +5,13 @@ import "planning-poker/cmd/web/design/templates"
 import "planning-poker/cmd/web/design/organisms"
 import "planning-poker/cmd/web/design/atoms"
 import "planning-poker/cmd/web/design/molecules"
+import "planning-poker/internal/server/models"
 
-templ DashboardPage(user map[string]string) {
+templ DashboardPage(user *models.SessionUser) {
 	@templates.DashTemplate() {
 		<div class="w-full h-full bg-gray-900 text-white flex flex-col items-center">
 			<!-- Dashboard Header -->
-			@organisms.DashboardHeader(user["Name"])
+			@organisms.DashboardHeader(user.Name)
 			<!-- Dashboard Content -->
 			<div class="w-full max-w-6xl p-8">
 				@atoms.Card("bg-gray-800", "p-6 mb-8") {
