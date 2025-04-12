@@ -15,7 +15,6 @@ import (
 	"github.com/resend/resend-go/v2"
 )
 
-// sendEmail sends an email using the Resend API.
 func (h *Handlers) sendEmail(to, subject, link string) error {
 	client := resend.NewClient(h.Config.EmailServerPassword)
 
@@ -73,24 +72,25 @@ func (h *Handlers) VerifyEmailHandler(c *fiber.Ctx) error {
 
 	sess, err := h.Store.Get(c)
 	if err != nil {
-		return err
+		log.Printf("Session error in VerifyEmailHandler: %v", err)
+		return c.Status(fiber.StatusInternalServerError).SendString("Could not process verification. Please try again.")
 	}
+
+	var sessionUser models.SessionUser
 	user := sess.Get("user")
-	sessionUser := models.SessionUser{Email: email}
 	if existing, ok := user.(models.SessionUser); ok {
-		sessionUser.Name = existing.Name
+		sessionUser = existing
 	}
+	sessionUser.Email = email
 
 	sess.Set("user", sessionUser)
-	err = sess.Save()
-	if err != nil {
-		log.Println(err)
-		return c.Status(http.StatusInternalServerError).SendString("Failed to log in")
+	if err := sess.Save(); err != nil {
+		log.Printf("Failed to save session in VerifyEmailHandler: %v", err)
+		// Render an error page or generic message
+		return c.Status(fiber.StatusInternalServerError).SendString("Could not complete sign in. Please try again.")
 	}
-
 	delete(session.EmailTokens, token)
-
-	return c.Redirect("/create-account")
+	return c.Redirect("/verification-success")
 }
 
 func (h *Handlers) ResendEmailHandler(c *fiber.Ctx) error {
