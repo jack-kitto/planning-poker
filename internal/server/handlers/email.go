@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 	"planning-poker/cmd/web/pages"
-	"planning-poker/internal/server/config"
+	"planning-poker/internal/server/models"
+	"planning-poker/internal/server/session"
 	"planning-poker/internal/server/utils"
-	"time"
 
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
@@ -43,16 +43,17 @@ func (h *Handlers) SendEmailHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+	user := models.SessionUser{Email: email}
+	sess.Set("user", user)
 	if email == "" {
 		return c.Status(fiber.StatusBadRequest).SendString("Email is required")
 	}
 
 	token := utils.GenerateToken()
-	config.EmailTokens[token] = email // Consider thread-safety here if concurrent access is possible.
+	session.EmailTokens[token] = email
 
 	link := fmt.Sprintf("%s/verify-email/%s", h.Config.BaseURL, token)
 
-	// Send the email asynchronously
 	go func() {
 		err := h.sendEmail(email, "Verify Your Email", link)
 		if err != nil {
@@ -65,22 +66,31 @@ func (h *Handlers) SendEmailHandler(c *fiber.Ctx) error {
 
 func (h *Handlers) VerifyEmailHandler(c *fiber.Ctx) error {
 	token := c.Params("token")
-	email, exists := config.EmailTokens[token]
+	email, exists := session.EmailTokens[token]
 	if !exists {
 		return c.Status(http.StatusUnauthorized).SendString("Invalid or expired token")
 	}
 
-	sess := h.Store.Get(c)
-	sess.Set("user", map[string]string{"Email": email})
-	err := sess.Save()
+	sess, err := h.Store.Get(c)
+	if err != nil {
+		return err
+	}
+	user := sess.Get("user")
+	sessionUser := models.SessionUser{Email: email}
+	if existing, ok := user.(models.SessionUser); ok {
+		sessionUser.Name = existing.Name
+	}
+
+	sess.Set("user", sessionUser)
+	err = sess.Save()
 	if err != nil {
 		log.Println(err)
 		return c.Status(http.StatusInternalServerError).SendString("Failed to log in")
 	}
 
-	delete(config.EmailTokens, token)
+	delete(session.EmailTokens, token)
 
-	return c.Redirect("/dashboard")
+	return c.Redirect("/create-account")
 }
 
 func (h *Handlers) ResendEmailHandler(c *fiber.Ctx) error {
@@ -90,7 +100,7 @@ func (h *Handlers) ResendEmailHandler(c *fiber.Ctx) error {
 	}
 
 	token := utils.GenerateToken()
-	config.EmailTokens[token] = email // Consider thread-safety here if concurrent access is possible.
+	session.EmailTokens[token] = email // Consider thread-safety here if concurrent access is possible.
 
 	link := fmt.Sprintf("%s/verify-email/%s", h.Config.BaseURL, token)
 
