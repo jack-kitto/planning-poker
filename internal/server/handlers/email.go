@@ -114,3 +114,28 @@ func (h *Handlers) ResendEmailHandler(c *fiber.Ctx) error {
 
 	return adaptor.HTTPHandler(templ.Handler(pages.EmailSentPage(email)))(c)
 }
+
+func (h *Handlers) CheckAuthStatusHandler(c *fiber.Ctx) error {
+	sess, err := h.Store.Get(c)
+	if err != nil {
+		// Don't expose internal errors, maybe return pending
+		log.Printf("Session error in CheckAuthStatusHandler: %v", err)
+		return c.JSON(fiber.Map{"status": "pending"})
+	}
+
+	user := sess.Get("user")
+	sessionUser, ok := user.(models.SessionUser)
+
+	// Check if the email is populated in the session (signifying verification)
+	if ok && sessionUser.Email != "" {
+		// Check if the name is also set, indicating account creation is done
+		if sessionUser.Name != "" {
+			return c.JSON(fiber.Map{"status": "authenticated", "redirect": "/dashboard"})
+		}
+		// Just email is set, needs account creation
+		return c.JSON(fiber.Map{"status": "verified", "redirect": "/create-account"})
+	}
+
+	// Not verified yet
+	return c.JSON(fiber.Map{"status": "pending"})
+}

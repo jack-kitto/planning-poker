@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"log"
 	"net/http"
 	"planning-poker/cmd/web"
 	"planning-poker/cmd/web/pages"
@@ -53,6 +52,8 @@ func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
 	app.Get("/auth/:provider", handlers.AuthHandler)
 	app.Get("/auth/:provider/callback", handlers.AuthCallbackHandler)
 	app.Post("/send-email", handlers.SendEmailHandler)
+
+	app.Get("/check-status", handlers.CheckAuthStatusHandler)
 	app.Post("/create-account", handlers.CreateAccountSubmitHandler)
 	app.Get("/create-account", handlers.CreateAccountHandler)
 	app.Get("/verify-email/:token", handlers.VerifyEmailHandler)
