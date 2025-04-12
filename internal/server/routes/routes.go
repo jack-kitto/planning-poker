@@ -53,6 +53,8 @@ func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
 	app.Get("/auth/:provider", handlers.AuthHandler)
 	app.Get("/auth/:provider/callback", handlers.AuthCallbackHandler)
 	app.Post("/send-email", handlers.SendEmailHandler)
+	app.Post("/create-account", handlers.CreateAccountSubmitHandler)
+	app.Get("/create-account", handlers.CreateAccountHandler)
 	app.Get("/verify-email/:token", handlers.VerifyEmailHandler)
 	app.Post("/resend-email", handlers.ResendEmailHandler)
 
