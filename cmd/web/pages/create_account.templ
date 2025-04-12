@@ -1,0 +1,30 @@
+package pages
+
+import "planning-poker/cmd/web/design/atoms"
+import "planning-poker/cmd/web/design/molecules"
+import "planning-poker/cmd/web/design/templates"
+
+templ CreateAccount(email string) {
+	@templates.DashTemplate() {
+		<div class="w-full min-h-screen flex flex-col items-center justify-center bg-gray-900 p-4">
+			<section class="w-full max-w-sm bg-white shadow-md rounded-lg p-6 md:p-8">
+				<div class="text-center mb-6">
+					@atoms.H1() {
+						Almost there!
+					}
+					<p class="text-gray-600 mt-2">
+						Complete your account setup for <span class="font-medium">{ email }</span>.
+					</p>
+				</div>
+				<form method="POST" action="/create-account" class="space-y-4">
+					@molecules.FormField("name", "name", "text", "Name", "Frank", true)
+					<div class="pt-2">
+						@atoms.Button(atoms.ButtonSecondary, atoms.ButtonMedium, true, templ.ComponentScript{}) {
+							Complete Setup
+						}
+					</div>
+				</form>
+			</section>
+		</div>
+	}
+}
