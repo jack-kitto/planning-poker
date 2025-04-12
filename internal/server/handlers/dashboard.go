@@ -10,7 +10,10 @@ import (
 )
 
 func (h *Handlers) DashboardHandler(c *fiber.Ctx) error {
-	sess := h.Store.Get(c)
+	sess, err := h.Store.Get(c)
+	if err != nil {
+		return err
+	}
 
 	user := sess.Get("user")
 	if user == nil {

@@ -58,10 +58,13 @@ func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
 
 	// Logout route
 	app.Get("/logout", func(c *fiber.Ctx) error {
-		sess := handlers.Store.Get(c)
-		err := sess.Destroy()
+		sess, err := handlers.Store.Get(c)
 		if err != nil {
-			log.Println(err)
+			return err
+		}
+		err = sess.Destroy()
+		if err != nil {
+			return err
 		}
 		return c.Redirect("/")
 	})

@@ -23,7 +23,10 @@ func (h *Handlers) AuthCallbackHandler(c *fiber.Ctx) error {
 		return c.Status(http.StatusUnauthorized).SendString(fmt.Sprintf("Authentication failed: %v", err))
 	}
 
-	sess := h.Store.Get(c)
+	sess, err := h.Store.Get(c)
+	if err != nil {
+		return err
+	}
 	sess.Set("user", map[string]string{
 		"Name":     user.Name,
 		"Email":    user.Email,

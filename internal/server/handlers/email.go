@@ -94,6 +94,10 @@ func (h *Handlers) sendEmail(to, subject, link string) error {
 
 func (h *Handlers) SendEmailHandler(c *fiber.Ctx) error {
 	email := c.FormValue("email")
+	sess, err := h.Store.Get(c)
+	if err != nil {
+		return err
+	}
 	if email == "" {
 		return c.Status(fiber.StatusBadRequest).SendString("Email is required")
 	}
