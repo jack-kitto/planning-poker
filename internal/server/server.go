@@ -1,10 +1,12 @@
 package server
 
 import (
+	"encoding/gob"
 	"planning-poker/internal/database"
-	"planning-poker/internal/server/config"
 	"planning-poker/internal/server/handlers"
+	"planning-poker/internal/server/models"
 	"planning-poker/internal/server/routes"
+	"planning-poker/internal/server/session"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -16,6 +18,7 @@ type FiberServer struct {
 }
 
 func New() *FiberServer {
+	gob.Register(models.SessionUser{})
 	server := &FiberServer{
 		App: fiber.New(fiber.Config{
 			ServerHeader: "planning-poker",
@@ -26,7 +29,10 @@ func New() *FiberServer {
 	}
 
 	// Initialize handlers with dependencies
-	handlers := handlers.NewHandlers(server.db, config.Store)
+	handlers := handlers.NewHandlers(server.db, session.Store)
+
+	// setup oath providers
+	setupProviders(handlers)
 
 	// Register routes
 	routes.RegisterFiberRoutes(server.App, handlers)
