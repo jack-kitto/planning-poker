@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"planning-poker/cmd/web/pages"
+	"planning-poker/internal/server/models"
 
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
@@ -20,20 +21,10 @@ func (h *Handlers) DashboardHandler(c *fiber.Ctx) error {
 		return c.Status(http.StatusUnauthorized).SendString("Unauthorized")
 	}
 
-	// Convert the user map to map[string]string
-	userMap, ok := user.(map[string]any)
+	sessionUser, ok := user.(models.SessionUser)
 	if !ok {
 		return c.Status(http.StatusInternalServerError).SendString("Invalid user data")
 	}
 
-	convertedUser := make(map[string]string)
-	for key, value := range userMap {
-		strValue, ok := value.(string)
-		if !ok {
-			return c.Status(http.StatusInternalServerError).SendString("Invalid user data")
-		}
-		convertedUser[key] = strValue
-	}
-
-	return adaptor.HTTPHandler(templ.Handler(pages.DashboardPage(convertedUser)))(c)
+	return adaptor.HTTPHandler(templ.Handler(pages.DashboardPage(&sessionUser)))(c)
 }
