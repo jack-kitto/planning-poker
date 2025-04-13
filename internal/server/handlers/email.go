@@ -100,7 +100,7 @@ func (h *Handlers) ResendEmailHandler(c *fiber.Ctx) error {
 	}
 
 	token := utils.GenerateToken()
-	session.EmailTokens[token] = email // Consider thread-safety here if concurrent access is possible.
+	session.EmailTokens[token] = email
 
 	link := fmt.Sprintf("%s/verify-email/%s", h.Config.BaseURL, token)
 
@@ -112,7 +112,7 @@ func (h *Handlers) ResendEmailHandler(c *fiber.Ctx) error {
 		}
 	}()
 
-	return adaptor.HTTPHandler(templ.Handler(pages.EmailSentPage(email)))(c)
+	return c.Redirect("/register")
 }
 
 func (h *Handlers) CheckAuthStatusHandler(c *fiber.Ctx) error {
