@@ -112,7 +112,7 @@ func (h *Handlers) ResendEmailHandler(c *fiber.Ctx) error {
 		}
 	}()
 
-	return c.Redirect("/register")
+	return adaptor.HTTPHandler(templ.Handler(pages.EmailSentPage(email)))(c)
 }
 
 func (h *Handlers) CheckAuthStatusHandler(c *fiber.Ctx) error {
