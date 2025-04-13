@@ -18,7 +18,7 @@ type FiberServer struct {
 }
 
 func New() *FiberServer {
-	gob.Register(models.SessionUser{})
+	gob.Register(models.User{})
 	server := &FiberServer{
 		App: fiber.New(fiber.Config{
 			ServerHeader: "planning-poker",
