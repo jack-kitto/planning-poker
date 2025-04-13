@@ -33,10 +33,7 @@ func gracefulShutdown(fiberServer *server.FiberServer, done chan bool) {
 }
 
 func main() {
-	// Initialize Goth with OAuth providers
-
 	server := server.New()
-
 	done := make(chan bool, 1)
 
 	go func() {

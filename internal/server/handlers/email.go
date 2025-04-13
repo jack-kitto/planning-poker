@@ -42,7 +42,7 @@ func (h *Handlers) SendEmailHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	user := models.User{Email: email, Provider: "email"}
+	user := models.User{Email: email}
 	sess.Set("user", user)
 	if email == "" {
 		return c.Status(fiber.StatusBadRequest).SendString("Email is required")

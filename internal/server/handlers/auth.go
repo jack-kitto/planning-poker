@@ -29,9 +29,8 @@ func (h *Handlers) AuthCallbackHandler(c *fiber.Ctx) error {
 		return err
 	}
 	sess.Set("user", models.User{
-		Name:     user.Name,
-		Email:    user.Email,
-		Provider: user.Provider,
+		Name:  user.Name,
+		Email: user.Email,
 	})
 	save_err := sess.Save()
 	if save_err != nil {
