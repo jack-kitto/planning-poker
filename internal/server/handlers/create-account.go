@@ -10,10 +10,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 )
 
-// app.Get("/create-account", func(c *fiber.Ctx) error {
-//
-// })
-
 func (h *Handlers) CreateAccountHandler(c *fiber.Ctx) error {
 	sess, err := h.Store.Get(c)
 	if err != nil {
