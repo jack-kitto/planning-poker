@@ -7,7 +7,7 @@ import "planning-poker/cmd/web/design/atoms"
 import "planning-poker/cmd/web/design/molecules"
 import "planning-poker/internal/server/models"
 
-templ DashboardPage(user *models.SessionUser) {
+templ DashboardPage(user *models.User) {
 	@templates.DashTemplate() {
 		<div class="w-full h-full bg-gray-900 text-white flex flex-col items-center">
 			<!-- Dashboard Header -->
