@@ -17,7 +17,7 @@ func (h *Handlers) CreateAccountHandler(c *fiber.Ctx) error {
 	}
 
 	user := sess.Get("user")
-	sessionUser, ok := user.(models.SessionUser)
+	sessionUser, ok := user.(models.User)
 	if !ok || sessionUser.Email == "" {
 		return c.Status(fiber.StatusUnauthorized).SendString("No email in session")
 	}
@@ -35,7 +35,7 @@ func (h *Handlers) CreateAccountSubmitHandler(c *fiber.Ctx) error {
 	if user == nil {
 		return nil
 	}
-	existing, ok := user.(models.SessionUser)
+	existing, ok := user.(models.User)
 	if ok {
 		existing.Name = name
 		fmt.Println("Setting name to:")

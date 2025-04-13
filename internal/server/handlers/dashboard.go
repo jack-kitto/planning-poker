@@ -21,7 +21,7 @@ func (h *Handlers) DashboardHandler(c *fiber.Ctx) error {
 		return c.Status(http.StatusUnauthorized).SendString("Unauthorized")
 	}
 
-	sessionUser, ok := user.(models.SessionUser)
+	sessionUser, ok := user.(models.User)
 	if !ok {
 		return c.Status(http.StatusInternalServerError).SendString("Invalid user data")
 	}

@@ -42,7 +42,7 @@ func (h *Handlers) SendEmailHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	user := models.SessionUser{Email: email}
+	user := models.User{Email: email, Provider: "email"}
 	sess.Set("user", user)
 	if email == "" {
 		return c.Status(fiber.StatusBadRequest).SendString("Email is required")
@@ -76,9 +76,9 @@ func (h *Handlers) VerifyEmailHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).SendString("Could not process verification. Please try again.")
 	}
 
-	var sessionUser models.SessionUser
+	var sessionUser models.User
 	user := sess.Get("user")
-	if existing, ok := user.(models.SessionUser); ok {
+	if existing, ok := user.(models.User); ok {
 		sessionUser = existing
 	}
 	sessionUser.Email = email
@@ -123,7 +123,7 @@ func (h *Handlers) CheckAuthStatusHandler(c *fiber.Ctx) error {
 	}
 
 	user := sess.Get("user")
-	sessionUser, ok := user.(models.SessionUser)
+	sessionUser, ok := user.(models.User)
 
 	if ok && sessionUser.Email != "" {
 		var redirectURL string

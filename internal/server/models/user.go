@@ -1,6 +1,8 @@
 package models
 
-type SessionUser struct {
-	Email string
-	Name  string
+type User struct {
+	Email    string
+	Name     string
+	Provider string
+	Avatar   string
 }

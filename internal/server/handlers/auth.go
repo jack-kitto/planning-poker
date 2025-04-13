@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"planning-poker/internal/server/models"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/shareed2k/goth_fiber"
@@ -27,10 +28,10 @@ func (h *Handlers) AuthCallbackHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	sess.Set("user", map[string]string{
-		"Name":     user.Name,
-		"Email":    user.Email,
-		"Provider": user.Provider,
+	sess.Set("user", models.User{
+		Name:     user.Name,
+		Email:    user.Email,
+		Provider: user.Provider,
 	})
 	save_err := sess.Save()
 	if save_err != nil {
