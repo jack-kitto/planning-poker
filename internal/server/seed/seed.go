@@ -73,7 +73,7 @@ func Seed(db *bun.DB) error {
 
 	// --- Create Tables ---
 	log.Println("Creating tables...")
-	modelsToCreate := []interface{}{
+	modelsToCreate := []any{
 		(*models.User)(nil),
 		(*models.Organisation)(nil),
 		(*models.OrganisationMember)(nil),
