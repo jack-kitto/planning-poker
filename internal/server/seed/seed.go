@@ -32,9 +32,8 @@ const (
 var estimateValues = []string{"0", "1", "2", "3", "5", "8", "13", "20", "?", "coffee"}
 
 // Seed runs the database seeding process.
-func Seed(sqlDB *sql.DB) error {
+func Seed(db *bun.DB) error {
 	ctx := context.Background()
-	db := bun.NewDB(sqlDB, pgdialect.New())
 
 	// Optional: Add query logging
 	db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
