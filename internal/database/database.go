@@ -7,20 +7,18 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/pgdialect"
 )
 
 // Service represents a service that interacts with a database.
 type Service interface {
-	// Health returns a map of health status information.
-	// The keys and values in the map are service-specific.
 	Health() map[string]string
-
-	// Close terminates the database connection.
-	// It returns an error if the connection cannot be closed.
 	Close() error
 }
 
@@ -36,14 +34,19 @@ var (
 	host       = os.Getenv("BLUEPRINT_DB_HOST")
 	schema     = os.Getenv("BLUEPRINT_DB_SCHEMA")
 	dbInstance *service
+
+	bunDB     *bun.DB
+	bunDBOnce sync.Once
 )
 
 func New() Service {
-	// Reuse Connection
 	if dbInstance != nil {
 		return dbInstance
 	}
-	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s", username, password, host, port, database, schema)
+	connStr := fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s",
+		username, password, host, port, database, schema,
+	)
 	db, err := sql.Open("pgx", connStr)
 	if err != nil {
 		log.Fatal(err)
@@ -54,6 +57,22 @@ func New() Service {
 	return dbInstance
 }
 
+// Expose the *sql.DB for Bun
+func SQLDB() *sql.DB {
+	if dbInstance == nil {
+		New()
+	}
+	return dbInstance.db
+}
+
+// Singleton Bun DB instance
+func BunDB() *bun.DB {
+	bunDBOnce.Do(func() {
+		bunDB = bun.NewDB(SQLDB(), pgdialect.New())
+	})
+	return bunDB
+}
+
 // Health checks the health of the database connection by pinging the database.
 // It returns a map with keys indicating various health statistics.
 func (s *service) Health() map[string]string {
@@ -61,7 +80,6 @@ func (s *service) Health() map[string]string {
 	defer cancel()
 
 	stats := make(map[string]string)
-
 	// Ping the database
 	err := s.db.PingContext(ctx)
 	if err != nil {
