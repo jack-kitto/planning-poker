@@ -2,11 +2,14 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"os"
 	"os/signal"
+	"planning-poker/internal/database"
 	"planning-poker/internal/server"
+	"planning-poker/internal/server/seed"
 	"strconv"
 	"syscall"
 	"time"
@@ -35,6 +38,18 @@ func gracefulShutdown(fiberServer *server.FiberServer, done chan bool) {
 func main() {
 	server := server.New()
 	done := make(chan bool, 1)
+	seedFlag := flag.Bool("seed", false, "Clean and seed the database")
+	flag.Parse()
+
+	if *seedFlag {
+		log.Println("Seeding database...")
+		db := database.BunDB()
+		if err := seed.Seed(db); err != nil {
+			log.Fatalf("Seeding failed: %v", err)
+		}
+		log.Println("Seeding complete.")
+		return
+	}
 
 	go func() {
 		port, _ := strconv.Atoi(os.Getenv("PORT"))
