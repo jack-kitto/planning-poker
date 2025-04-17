@@ -44,7 +44,12 @@ func Seed(sqlDB *sql.DB) error {
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %w", err)
 	}
-	defer tx.Rollback() // Rollback if any error occurs before commit
+	defer func() {
+		err := tx.Rollback()
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	log.Println("Starting database seeding...")
 
