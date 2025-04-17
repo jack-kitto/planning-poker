@@ -175,7 +175,7 @@ type UserStory struct {
 	SessionID     string    `bun:"session_id,notnull,type:varchar(25)"`
 	Title         string    `bun:"title,notnull"`
 	Description   *string   `bun:"description,nullzero"` // Pointer for NULLable text
-	Order         int       `bun:"story_order,notnull,default:0"`
+	Index         string    `bun:"story_index,notnull,default:0"`
 	Status        string    `bun:"status,notnull,default:'pending'"`
 	FinalEstimate *string   `bun:"final_estimate,nullzero,type:varchar(20)"` // Pointer for NULLable varchar
 	CreatedAt     time.Time `bun:"created_at,notnull,default:current_timestamp"`

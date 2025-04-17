@@ -251,7 +251,7 @@ func Seed(db *bun.DB) error {
 				SessionID:   session.ID,
 				Title:       fmt.Sprintf("Story %d: %s", i+1, gofakeit.HackerPhrase()),
 				Description: &desc,
-				Order:       i,
+				Index:       fmt.Sprintf("%d", i),
 				Status:      status,
 				// FinalEstimate will be set later for 'estimated' stories
 			}
