@@ -237,7 +237,7 @@ func Seed(db *bun.DB) error {
 			continue // Skip sessions with no participants
 		}
 
-		for i := 0; i < numStoriesPerSession; i++ {
+		for i := range numStoriesPerSession {
 			desc := gofakeit.Sentence(15)
 			status := "pending"
 			if gofakeit.Bool() {
