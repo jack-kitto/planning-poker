@@ -49,23 +49,23 @@ func Seed(sqlDB *sql.DB) error {
 	log.Println("Starting database seeding...")
 
 	// --- Drop existing data (optional, use with caution!) ---
-	// log.Println("Dropping existing data...")
-	// modelsToDrop := []interface{}{
-	// 	(*models.Vote)(nil),
-	// 	(*models.UserStory)(nil),
-	// 	(*models.SessionParticipant)(nil),
-	// 	(*models.Session)(nil),
-	// 	(*models.OrganisationMember)(nil),
-	// 	(*models.Organisation)(nil),
-	// 	(*models.User)(nil),
-	// }
-	// for _, model := range modelsToDrop {
-	// 	// CASCADE might be needed depending on FK constraints if not dropping in reverse order
-	// 	if _, err := tx.NewDropTable().Model(model).IfExists().Exec(ctx); err != nil {
-	// 		return fmt.Errorf("failed to drop table for %T: %w", model, err)
-	// 	}
-	// }
-	// log.Println("Finished dropping tables.")
+	log.Println("Dropping existing data...")
+	modelsToDrop := []any{
+		(*models.Vote)(nil),
+		(*models.UserStory)(nil),
+		(*models.SessionParticipant)(nil),
+		(*models.Session)(nil),
+		(*models.OrganisationMember)(nil),
+		(*models.Organisation)(nil),
+		(*models.User)(nil),
+	}
+	for _, model := range modelsToDrop {
+		// CASCADE might be needed depending on FK constraints if not dropping in reverse order
+		if _, err := tx.NewDropTable().Model(model).IfExists().Exec(ctx); err != nil {
+			return fmt.Errorf("failed to drop table for %T: %w", model, err)
+		}
+	}
+	log.Println("Finished dropping tables.")
 
 	// --- Create Tables ---
 	log.Println("Creating tables...")
