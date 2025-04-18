@@ -15,15 +15,13 @@ templ LandingPage() {
                   window.location.href = '/register';
                 }
             </script>
-			<!-- Header Section -->
-			@organisms.Header("Grug Planning Poker")
 			<!-- Hero Section -->
 			@organisms.Hero(
 				"Grug Make Planning Easy",
 				"Grug Smash Complicated Tools",
 				"Grug tired of big-brain planning apps. Grug make simple tool for team to plan fast. Grug say: \"Planning should be easy, like smashing rock!\" Grug also share tool with cave friends. Open source on GitHub!",
-				"Grug Say: \"Click Here to Start Planning!\"",
-				"/register",
+				"Click Here to Start Planning!",
+				"/login",
 			)
 			<!-- Key Features Section -->
 			<section class={ "py-16 px-6 " + design.Colors.Background.Paper + " w-full" }>
@@ -59,34 +57,7 @@ templ LandingPage() {
 					</div>
 				</div>
 			</section>
-			<!-- Primary CTA Section -->
-			<section id="cta" class={ "py-16 px-6 " + design.Colors.Background.Dark + " w-full" }>
-				<div class="max-w-2xl mx-auto text-center">
-					@atoms.H3() {
-						Grug Say: "Join or Create Room Now"
-					}
-					<p class={ design.Colors.Text.Secondary + " mb-8" }>
-						Grug make easy. Join room or make new room. No big-brain thinking needed.
-					</p>
-					<form class="flex flex-col gap-4">
-						@atoms.Input("session-code", "session-code", "text", "Enter session code from cave leader", true)
-						@atoms.Input("user-name", "user-name", "text", "Your Name (e.g., 'Grug')", true)
-						<div class="flex gap-4 justify-center">
-							@atoms.Button(atoms.ButtonPrimary, atoms.ButtonLarge, false, templ.ComponentScript{}) {
-								Grug Join Room
-							}
-							@atoms.Button(atoms.ButtonSecondary, atoms.ButtonLarge, false, templ.ComponentScript{}) {
-								Grug Create Room
-							}
-						</div>
-					</form>
-					<p class={ "text-sm " + design.Colors.Text.Disabled + " mt-4" }>
-						Grug say: "No account? No problem! <a href="/register" class="text-indigo-400 underline">Sign up</a> to save sessions and unlock big-brain features."
-					</p>
-				</div>
-			</section>
-			<!-- Testimonial Section -->
-			<section class={ "py-16 px-6 " + design.Colors.Background.Paper + " w-full" }>
+			<section class={ "py-16 px-6 " + design.Colors.Background.Dark + " w-full" }>
 				<div class="max-w-4xl mx-auto text-center">
 					@atoms.H3() {
 						What Cave Friends Say
@@ -98,7 +69,7 @@ templ LandingPage() {
 				</div>
 			</section>
 			<!-- FAQ Section -->
-			<section class={ "py-16 px-6 " + design.Colors.Background.Dark + " w-full" }>
+			<section class={ "py-16 px-6 " + design.Colors.Background.Paper + " w-full" }>
 				<div class="max-w-4xl mx-auto">
 					<h3 class="text-3xl font-bold text-center mb-6">Grug Answer Questions</h3>
 					<div class="space-y-6">
