@@ -12,7 +12,6 @@ import (
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/lucsky/cuid"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
 )
@@ -127,44 +126,4 @@ func (s *service) Health() map[string]string {
 func (s *service) Close() error {
 	log.Printf("Disconnected from database: %s", database)
 	return s.db.Close()
-}
-
-func (s *service) CreateUser(name string, email string) (*models.User, error) {
-	user := &models.User{
-		ID:        cuid.New(),
-		Name:      name,
-		Email:     email,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-	}
-
-	_, err := s.db.NewInsert().Model(user).Exec(context.Background())
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
-}
-
-func (s *service) GetUser(email string) (*models.User, error) {
-	user := new(models.User)
-	println(email)
-	err := s.db.NewSelect().Model(user).Where("email = ?", email).Scan(context.Background())
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
-}
-
-func (s *service) UpdateUser(name string, email string) (*models.User, error) {
-	user := &models.User{
-		Name: name,
-	}
-
-	_, err := s.db.NewUpdate().Model(user).Column("name").Where("email = ?", email).Exec(context.Background())
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
 }
