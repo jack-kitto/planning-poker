@@ -22,6 +22,7 @@ type Service interface {
 	Health() map[string]string
 	Close() error
 	CreateUser(name string, email string) (*models.User, error)
+	GetUser(email string) (*models.User, error)
 }
 
 type service struct {
@@ -141,5 +142,15 @@ func (s *service) CreateUser(name string, email string) (*models.User, error) {
 		return nil, err
 	}
 
+	return user, nil
+}
+
+func (s *service) GetUser(email string) (*models.User, error) {
+	user := new(models.User)
+	println(email)
+	err := s.db.NewSelect().Model(user).Where("email = ?", email).Scan(context.Background())
+	if err != nil {
+		return nil, err
+	}
 	return user, nil
 }
