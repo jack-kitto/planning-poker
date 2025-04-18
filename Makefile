@@ -102,6 +102,6 @@ init-db:
 		printf "."; \
 		sleep 1; \
 	done
-	@echo "\nDatabase is ready. Seeding..."
+	@echo "\nDatabase is ready. initialising..."
 	@go run cmd/api/main.go --init-db
 .PHONY: all build run test clean watch tailwind-install docker-run docker-down itest templ-install seed init-db

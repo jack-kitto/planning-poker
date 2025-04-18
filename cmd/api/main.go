@@ -58,7 +58,7 @@ func main() {
 		if err := seed.Init(db); err != nil {
 			log.Fatalf("Seeding failed: %v", err)
 		}
-		log.Println("Seeding complete.")
+		log.Println("Intialisation complete.")
 		return
 	}
 	go func() {
