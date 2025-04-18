@@ -22,6 +22,7 @@ type Service interface {
 	Health() map[string]string
 	Close() error
 	CreateUser(name string, email string) (*models.User, error)
+	UpdateUser(name string, email string) (*models.User, error)
 	GetUser(email string) (*models.User, error)
 }
 
@@ -152,5 +153,18 @@ func (s *service) GetUser(email string) (*models.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	return user, nil
+}
+
+func (s *service) UpdateUser(name string, email string) (*models.User, error) {
+	user := &models.User{
+		Name: name,
+	}
+
+	_, err := s.db.NewUpdate().Model(user).Column("name").Where("email = ?", email).Exec(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
 	return user, nil
 }
