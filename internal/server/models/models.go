@@ -9,7 +9,7 @@ import (
 type User struct {
 	bun.BaseModel `bun:"table:users,alias:u"`
 
-	ID        string    `bun:"id,pk,type:varchar(25)"` // CUIDs are typically 25 chars
+	ID        string    `bun:"id,pk,type:varchar(25)"`
 	Name      string    `bun:"name,notnull"`
 	Email     string    `bun:"email,notnull,unique"`
 	CreatedAt time.Time `bun:"created_at,notnull,default:current_timestamp"`

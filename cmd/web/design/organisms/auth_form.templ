@@ -4,7 +4,7 @@ package organisms
 import "planning-poker/cmd/web/design/atoms"
 import "planning-poker/cmd/web/design/molecules"
 
-templ AuthForm(title string, subtitle string, action templ.SafeURL, buttonText string, isLogin bool) {
+templ AuthForm(title string, subtitle string, action templ.SafeURL, buttonText string) {
 	<section class="w-full max-w-sm bg-white shadow-md rounded-lg p-6 text-center">
 		@atoms.H1() {
 			{ title }
@@ -30,13 +30,5 @@ templ AuthForm(title string, subtitle string, action templ.SafeURL, buttonText s
 				{ buttonText }
 			}
 		</form>
-		<!-- Toggle Link -->
-		<p class="text-sm text-gray-600 mt-4">
-			if isLogin {
-				Don't have an account? <a href="/register" class="text-blue-500">Sign up</a>
-			} else {
-				Already have an account? <a href="/login" class="text-blue-500">Sign in</a>
-			}
-		</p>
 	</section>
 }

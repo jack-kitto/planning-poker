@@ -79,4 +79,29 @@ watch:
             fi; \
         fi
 
-.PHONY: all build run test clean watch tailwind-install docker-run docker-down itest templ-install
+# Seed command
+seed:
+	@echo "Rebuilding and seeding..."
+	@docker compose down -v
+	@docker compose up --build -d psql_bp
+	@echo "Waiting for database to be ready..."
+	@until docker exec planning-poker-psql_bp-1 pg_isready -U admin -d planning-poker > /dev/null 2>&1; do \
+		printf "."; \
+		sleep 1; \
+	done
+	@echo "\nDatabase is ready. Seeding..."
+	@go run cmd/api/main.go --seed
+
+# Init command
+init-db:
+	@echo "Rebuilding and initialising database..."
+	@docker compose down -v
+	@docker compose up --build -d psql_bp
+	@echo "Waiting for database to be ready..."
+	@until docker exec planning-poker-psql_bp-1 pg_isready -U admin -d planning-poker > /dev/null 2>&1; do \
+		printf "."; \
+		sleep 1; \
+	done
+	@echo "\nDatabase is ready. initialising..."
+	@go run cmd/api/main.go --init-db
+.PHONY: all build run test clean watch tailwind-install docker-run docker-down itest templ-install seed init-db

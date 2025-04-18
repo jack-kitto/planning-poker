@@ -9,6 +9,7 @@ module.exports = {
       colors: {
         primary: {
           DEFAULT: '#6366F1', // indigo-500
+          light: '#4F46E5',
           50: '#EEF2FF',
           100: '#E0E7FF',
           200: '#C7D2FE',
@@ -22,6 +23,7 @@ module.exports = {
         },
         secondary: {
           DEFAULT: '#374151', // gray-700
+          light: '#4B5563',
           50: '#F9FAFB',
           100: '#F3F4F6',
           200: '#E5E7EB',

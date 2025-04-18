@@ -6,12 +6,13 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"planning-poker/internal/server/models"
 	"strconv"
-	"sync"
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/lucsky/cuid"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
 )
@@ -20,10 +21,13 @@ import (
 type Service interface {
 	Health() map[string]string
 	Close() error
+	CreateUser(name string, email string) (*models.User, error)
+	UpdateUser(name string, email string) (*models.User, error)
+	GetUser(email string) (*models.User, error)
 }
 
 type service struct {
-	db *sql.DB
+	db *bun.DB
 }
 
 var (
@@ -34,43 +38,36 @@ var (
 	host       = os.Getenv("BLUEPRINT_DB_HOST")
 	schema     = os.Getenv("BLUEPRINT_DB_SCHEMA")
 	dbInstance *service
-
-	bunDB     *bun.DB
-	bunDBOnce sync.Once
 )
 
 func New() Service {
 	if dbInstance != nil {
 		return dbInstance
 	}
+
 	connStr := fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s",
 		username, password, host, port, database, schema,
 	)
-	db, err := sql.Open("pgx", connStr)
+	sqlDB, err := sql.Open("pgx", connStr)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	bunDB := bun.NewDB(sqlDB, pgdialect.New())
+
 	dbInstance = &service{
-		db: db,
+		db: bunDB,
 	}
 	return dbInstance
 }
 
-// Expose the *sql.DB for Bun
-func SQLDB() *sql.DB {
+// Get the Bun DB instance
+func BunDB() *bun.DB {
 	if dbInstance == nil {
 		New()
 	}
 	return dbInstance.db
-}
-
-// Singleton Bun DB instance
-func BunDB() *bun.DB {
-	bunDBOnce.Do(func() {
-		bunDB = bun.NewDB(SQLDB(), pgdialect.New())
-	})
-	return bunDB
 }
 
 // Health checks the health of the database connection by pinging the database.
@@ -130,4 +127,44 @@ func (s *service) Health() map[string]string {
 func (s *service) Close() error {
 	log.Printf("Disconnected from database: %s", database)
 	return s.db.Close()
+}
+
+func (s *service) CreateUser(name string, email string) (*models.User, error) {
+	user := &models.User{
+		ID:        cuid.New(),
+		Name:      name,
+		Email:     email,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	_, err := s.db.NewInsert().Model(user).Exec(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (s *service) GetUser(email string) (*models.User, error) {
+	user := new(models.User)
+	println(email)
+	err := s.db.NewSelect().Model(user).Where("email = ?", email).Scan(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (s *service) UpdateUser(name string, email string) (*models.User, error) {
+	user := &models.User{
+		Name: name,
+	}
+
+	_, err := s.db.NewUpdate().Model(user).Column("name").Where("email = ?", email).Exec(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

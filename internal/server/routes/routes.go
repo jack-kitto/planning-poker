@@ -33,7 +33,6 @@ func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
 	// Basic routes
 	app.Get("/", adaptor.HTTPHandler(templ.Handler(pages.LandingPage())))
 	app.Get("/login", adaptor.HTTPHandler(templ.Handler(pages.LoginPage())))
-	app.Get("/register", adaptor.HTTPHandler(templ.Handler(pages.SignUpPage())))
 	app.Get("/dashboard", middleware.ProtectedMiddleware(handlers.Store), handlers.DashboardHandler)
 
 	// Health check
@@ -72,4 +71,7 @@ func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
 		}
 		return c.Redirect("/")
 	})
+	app.Post("/user", handlers.CreateUserHandler)
+	app.Patch("/user", handlers.UpdateUserHandler)
+	app.Get("/user", handlers.GetUserHandler)
 }

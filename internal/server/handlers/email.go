@@ -38,12 +38,6 @@ func (h *Handlers) sendEmail(to, subject, link string) error {
 
 func (h *Handlers) SendEmailHandler(c *fiber.Ctx) error {
 	email := c.FormValue("email")
-	sess, err := h.Store.Get(c)
-	if err != nil {
-		return err
-	}
-	user := models.User{Email: email}
-	sess.Set("user", user)
 	if email == "" {
 		return c.Status(fiber.StatusBadRequest).SendString("Email is required")
 	}
@@ -76,14 +70,15 @@ func (h *Handlers) VerifyEmailHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).SendString("Could not process verification. Please try again.")
 	}
 
-	var sessionUser models.User
-	user := sess.Get("user")
-	if existing, ok := user.(models.User); ok {
-		sessionUser = existing
+	user, err := h.DB.GetUser(email)
+	if err != nil {
+		user, err = h.DB.CreateUser("", email)
+		if err != nil {
+			return err
+		}
 	}
-	sessionUser.Email = email
 
-	sess.Set("user", sessionUser)
+	sess.Set("user", user)
 	if err := sess.Save(); err != nil {
 		log.Printf("Failed to save session in VerifyEmailHandler: %v", err)
 		// Render an error page or generic message
