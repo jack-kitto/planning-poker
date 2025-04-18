@@ -1,7 +1,8 @@
 package handlers
 
 import (
-	"fmt"
+	"log"
+	"net/http"
 	"planning-poker/cmd/web/pages"
 	"planning-poker/internal/server/models"
 
@@ -31,21 +32,21 @@ func (h *Handlers) CreateAccountSubmitHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	user := sess.Get("user")
-	if user == nil {
-		return nil
+	userData := sess.Get("user")
+	user, ok := userData.(models.User)
+	if !ok || user.Email == "" {
+		return c.Status(fiber.StatusUnauthorized).SendString("No email in session")
 	}
-	existing, ok := user.(models.User)
-	if ok {
-		existing.Name = name
-		fmt.Println("Setting name to:")
-		fmt.Println(name)
-		sess.Set("user", existing)
-		if err := sess.Save(); err != nil {
-			return err
-		}
-	} else {
-		fmt.Println("No existing user found")
+	_, err = h.DB.UpdateUser(name, user.Email)
+	if err != nil {
+		return c.Status(http.StatusUnauthorized).SendString("Invalid or expired token")
+	}
+	user.Name = name
+	sess.Set("user", user)
+	if err := sess.Save(); err != nil {
+		log.Printf("Failed to save session in VerifyEmailHandler: %v", err)
+		// Render an error page or generic message
+		return c.Status(fiber.StatusInternalServerError).SendString("Could not complete sign up. Please try again.")
 	}
 	return c.Redirect("/dashboard")
 }

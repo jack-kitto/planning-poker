@@ -6,8 +6,6 @@ import (
 	"planning-poker/cmd/web/pages"
 	"planning-poker/internal/server/handlers"
 	"planning-poker/internal/server/middleware"
-	"planning-poker/internal/server/models"
-	"time"
 
 	"github.com/a-h/templ"
 	"github.com/gofiber/contrib/websocket"
@@ -15,7 +13,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
-	"github.com/lucsky/cuid"
 )
 
 func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
@@ -36,7 +33,6 @@ func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
 	// Basic routes
 	app.Get("/", adaptor.HTTPHandler(templ.Handler(pages.LandingPage())))
 	app.Get("/login", adaptor.HTTPHandler(templ.Handler(pages.LoginPage())))
-	app.Get("/register", adaptor.HTTPHandler(templ.Handler(pages.SignUpPage())))
 	app.Get("/dashboard", middleware.ProtectedMiddleware(handlers.Store), handlers.DashboardHandler)
 
 	// Health check
