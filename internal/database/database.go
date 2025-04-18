@@ -23,7 +23,7 @@ type Service interface {
 }
 
 type service struct {
-	db *sql.DB
+	db *bun.DB
 }
 
 var (
@@ -35,7 +35,6 @@ var (
 	schema     = os.Getenv("BLUEPRINT_DB_SCHEMA")
 	dbInstance *service
 
-	bunDB     *bun.DB
 	bunDBOnce sync.Once
 )
 
@@ -47,30 +46,25 @@ func New() Service {
 		"postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s",
 		username, password, host, port, database, schema,
 	)
-	db, err := sql.Open("pgx", connStr)
+	sqlDB, err := sql.Open("pgx", connStr)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	bunDB := bun.NewDB(sqlDB, pgdialect.New())
+
 	dbInstance = &service{
-		db: db,
+		db: bunDB,
 	}
 	return dbInstance
 }
 
-// Expose the *sql.DB for Bun
-func SQLDB() *sql.DB {
+// Get the Bun DB instance
+func BunDB() *bun.DB {
 	if dbInstance == nil {
 		New()
 	}
 	return dbInstance.db
-}
-
-// Singleton Bun DB instance
-func BunDB() *bun.DB {
-	bunDBOnce.Do(func() {
-		bunDB = bun.NewDB(SQLDB(), pgdialect.New())
-	})
-	return bunDB
 }
 
 // Health checks the health of the database connection by pinging the database.
@@ -81,7 +75,7 @@ func (s *service) Health() map[string]string {
 
 	stats := make(map[string]string)
 	// Ping the database
-	err := s.db.PingContext(ctx)
+	err := s.db.DB.PingContext(ctx)
 	if err != nil {
 		stats["status"] = "down"
 		stats["error"] = fmt.Sprintf("db down: %v", err)
@@ -94,7 +88,7 @@ func (s *service) Health() map[string]string {
 	stats["message"] = "It's healthy"
 
 	// Get database stats (like open connections, in use, idle, etc.)
-	dbStats := s.db.Stats()
+	dbStats := s.db.DB.Stats()
 	stats["open_connections"] = strconv.Itoa(dbStats.OpenConnections)
 	stats["in_use"] = strconv.Itoa(dbStats.InUse)
 	stats["idle"] = strconv.Itoa(dbStats.Idle)
