@@ -79,7 +79,7 @@ func (s *service) Health() map[string]string {
 
 	stats := make(map[string]string)
 	// Ping the database
-	err := s.db.DB.PingContext(ctx)
+	err := s.db.PingContext(ctx)
 	if err != nil {
 		stats["status"] = "down"
 		stats["error"] = fmt.Sprintf("db down: %v", err)
@@ -92,7 +92,7 @@ func (s *service) Health() map[string]string {
 	stats["message"] = "It's healthy"
 
 	// Get database stats (like open connections, in use, idle, etc.)
-	dbStats := s.db.DB.Stats()
+	dbStats := s.db.Stats()
 	stats["open_connections"] = strconv.Itoa(dbStats.OpenConnections)
 	stats["in_use"] = strconv.Itoa(dbStats.InUse)
 	stats["idle"] = strconv.Itoa(dbStats.Idle)
