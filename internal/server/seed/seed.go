@@ -46,6 +46,49 @@ var modelsToCreate = []any{
 	(*models.Vote)(nil),
 }
 
+func Init(db *bun.DB) error {
+	ctx := context.Background()
+
+	// Optional: Add query logging
+	db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
+
+	// Use a transaction for atomicity
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		}
+	}()
+
+	log.Println("Starting database initialisation...")
+
+	// --- Drop existing data (optional, use with caution!) ---
+	err = dropModels(ctx, tx)
+	if err != nil {
+		return err
+	}
+
+	// --- Create Tables ---
+	err = createModels(ctx, tx)
+	if err != nil {
+		return err
+	}
+
+	// --- Commit Transaction ---
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	log.Println("Database initialisation completed successfully!")
+	return nil
+}
+
 // Seed runs the database seeding process.
 func Seed(db *bun.DB) error {
 	ctx := context.Background()
