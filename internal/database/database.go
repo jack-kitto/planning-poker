@@ -22,6 +22,8 @@ type Service interface {
 	Close() error
 	CreateUser(name string, email string) (*models.User, error)
 	UpdateUser(name string, email string) (*models.User, error)
+	CreateOrg(name string, user *models.User) (*models.Organisation, error)
+	CreateOrgMember(org *models.Organisation, user *models.User) (*models.OrganisationMember, error)
 	GetUser(email string) (*models.User, error)
 }
 
