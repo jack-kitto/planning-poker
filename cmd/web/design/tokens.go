@@ -1,4 +1,3 @@
-// cmd/web/design/tokens.go
 package design
 
 // Color palette
