@@ -39,6 +39,7 @@ func main() {
 	server := server.New()
 	done := make(chan bool, 1)
 	seedFlag := flag.Bool("seed", false, "Clean and seed the database")
+	initDbFlag := flag.Bool("init-db", false, "Clean and init the database with tables")
 	flag.Parse()
 
 	if *seedFlag {
@@ -51,6 +52,15 @@ func main() {
 		return
 	}
 
+	if *initDbFlag {
+		log.Println("intialising database...")
+		db := database.BunDB()
+		if err := seed.Init(db); err != nil {
+			log.Fatalf("Seeding failed: %v", err)
+		}
+		log.Println("Seeding complete.")
+		return
+	}
 	go func() {
 		port, _ := strconv.Atoi(os.Getenv("PORT"))
 		err := server.Listen(fmt.Sprintf(":%d", port))
