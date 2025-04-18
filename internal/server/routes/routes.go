@@ -6,6 +6,8 @@ import (
 	"planning-poker/cmd/web/pages"
 	"planning-poker/internal/server/handlers"
 	"planning-poker/internal/server/middleware"
+	"planning-poker/internal/server/models"
+	"time"
 
 	"github.com/a-h/templ"
 	"github.com/gofiber/contrib/websocket"
@@ -13,6 +15,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
+	"github.com/lucsky/cuid"
 )
 
 func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
@@ -71,5 +74,17 @@ func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
 			return err
 		}
 		return c.Redirect("/")
+	})
+	app.Post("/user", func(c *fiber.Ctx) error {
+		name := c.FormValue("name")
+		email := c.FormValue("email")
+		user := &models.User{
+			ID:        cuid.New(),
+			Name:      name,
+			Email:     email,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		}
+		return c.JSON(user)
 	})
 }
