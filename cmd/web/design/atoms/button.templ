@@ -28,9 +28,9 @@ func getButtonClasses(variant ButtonVariant, size ButtonSize, fullWidth bool) st
 	// Variant classes
 	switch variant {
 	case ButtonPrimary:
-		variantClasses = "bg-" + design.Colors.Primary + " hover:bg-indigo-600 text-white " + design.Shadows.Medium
+		variantClasses = "bg-primary hover:bg-primary-light text-white " + design.Shadows.Medium
 	case ButtonSecondary:
-		variantClasses = "bg-" + design.Colors.Secondary + " hover:bg-gray-600 text-white"
+		variantClasses = "bg-" + design.Colors.Secondary + " hover:bg-secondary-light text-white"
 	case ButtonOutline:
 		variantClasses = "bg-transparent border border-" + design.Colors.Primary + " text-" + design.Colors.Primary + " hover:bg-indigo-50"
 	case ButtonText:
