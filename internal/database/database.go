@@ -8,7 +8,6 @@ import (
 	"os"
 	"planning-poker/internal/server/models"
 	"strconv"
-	"sync"
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -37,8 +36,6 @@ var (
 	host       = os.Getenv("BLUEPRINT_DB_HOST")
 	schema     = os.Getenv("BLUEPRINT_DB_SCHEMA")
 	dbInstance *service
-
-	bunDBOnce sync.Once
 )
 
 func New() Service {
