@@ -71,16 +71,4 @@ func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
 		}
 		return c.Redirect("/")
 	})
-	app.Post("/user", func(c *fiber.Ctx) error {
-		name := c.FormValue("name")
-		email := c.FormValue("email")
-		user := &models.User{
-			ID:        cuid.New(),
-			Name:      name,
-			Email:     email,
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		}
-		return c.JSON(user)
-	})
 }
