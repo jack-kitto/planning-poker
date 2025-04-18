@@ -71,4 +71,7 @@ func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
 		}
 		return c.Redirect("/")
 	})
+	app.Post("/user", handlers.CreateUserHandler)
+	app.Patch("/user", handlers.UpdateUserHandler)
+	app.Get("/user", handlers.GetUserHandler)
 }
