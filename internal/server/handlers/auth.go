@@ -29,6 +29,15 @@ func (h *Handlers) AuthCallbackHandler(c *fiber.Ctx) error {
 		if err != nil {
 			return err
 		}
+		org, err := h.DB.CreateOrg(fmt.Sprintf("%s's Org", user.Name), user)
+		if err != nil {
+			return err
+		}
+
+		_, err = h.DB.CreateOrgMember(org, user)
+		if err != nil {
+			return err
+		}
 	}
 
 	sess, err := h.Store.Get(c)

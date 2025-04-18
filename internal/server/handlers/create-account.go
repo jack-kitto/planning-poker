@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"planning-poker/cmd/web/pages"
@@ -40,6 +41,16 @@ func (h *Handlers) CreateAccountSubmitHandler(c *fiber.Ctx) error {
 	_, err = h.DB.UpdateUser(name, user.Email)
 	if err != nil {
 		return c.Status(http.StatusUnauthorized).SendString("Invalid or expired token")
+	}
+
+	org, err := h.DB.CreateOrg(fmt.Sprintf("%s's Org", name), &user)
+	if err != nil {
+		return err
+	}
+
+	_, err = h.DB.CreateOrgMember(org, &user)
+	if err != nil {
+		return err
 	}
 	user.Name = name
 	sess.Set("user", user)
