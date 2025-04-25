@@ -18,19 +18,28 @@ import (
 
 // Service represents a service that interacts with a database.
 type Service interface {
+	// Database connection management
 	Health() map[string]string
 	Close() error
+
+	// User operations
 	CreateUser(name string, email string) (*models.User, error)
 	UpdateUser(name string, email string) (*models.User, error)
 	GetUser(email string) (*models.User, error)
 	GetUserWithOrg(email string) (*models.User, error)
+
+	// Organisation operations
 	CreateOrg(name string, user *models.User) (*models.Organisation, error)
 	GetOrg(id string) (*models.Organisation, error)
 	CreateOrgMember(org *models.Organisation, user *models.User) (*models.OrganisationMember, error)
+
+	// Session operations
 	CreateSession(org *models.Organisation, owner *models.User, name string) (*models.Session, error)
 	GetSession(id string) (*models.Session, error)
 	UpdateSessionName(id string, name string) error
 	CreateSessionParticipant(sesh *models.Session, owner *models.User) (*models.SessionParticipant, error)
+
+	// User story operations
 	CreateStory(sesh *models.Session, title string, description *string, index string) (*models.UserStory, error)
 	GetUserStory(id string) (*models.UserStory, error)
 	UpdateStory(id string, title string, description string) error
