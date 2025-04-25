@@ -27,6 +27,12 @@ func generateEmailTemplate(link string) string {
             border-radius: 4px; 
             font-weight: bold; 
             margin: 20px 0;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #3730a3;
+            color: white;
+            text-decoration: none;
         }
         .footer { 
             margin-top: 30px; 
@@ -59,3 +65,4 @@ func generateEmailTemplate(link string) string {
 </html>
 `, link, year)
 }
+
