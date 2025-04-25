@@ -1,0 +1,67 @@
+package organisms
+
+import "planning-poker/internal/server/models"
+import "fmt"
+
+templ EditSessionForm(session *models.Session) {
+	<div id="session-title" class="flex items-center gap-2">
+		<form
+			hx-post={ fmt.Sprintf("/session/%s/edit-title", session.ID) }
+			hx-target="#session-title"
+			hx-swap="outerHTML"
+			class="flex items-center gap-2"
+		>
+			<input
+				type="text"
+				name="title"
+				value={ session.Name }
+				class="text-3xl font-semibold font-sans bg-background-paper text-white border-b border-primary-400 focus:outline-none px-2 py-1"
+				style="width: 18rem;"
+				autofocus
+				required
+			/>
+			<button
+				type="submit"
+				class="ml-2 px-3 py-1 bg-primary-500 text-white rounded hover:bg-primary-600 transition"
+			>
+				Save
+			</button>
+			<button
+				type="button"
+				class="ml-1 px-2 py-1 text-gray-400 hover:text-white"
+				hx-get={ fmt.Sprintf("/session/%s/title", session.ID) }
+				hx-target="#session-title"
+				hx-swap="outerHTML"
+				aria-label="Cancel"
+			>
+				Cancel
+			</button>
+		</form>
+	</div>
+}
+
+templ SessionTitle(session *models.Session) {
+	<div id="session-title" class="relative group">
+		<button
+			class="flex items-center text-left bg-transparent border-0 p-0 cursor-pointer group relative"
+			aria-label="Edit session title"
+			hx-get={ fmt.Sprintf("/session/%s/edit-title-form", session.ID) }
+			hx-target="#session-title"
+			hx-swap="outerHTML"
+		>
+			<span class="text-3xl font-semibold font-sans">
+				if (session.Name != "") {
+					{ session.Name }
+				} else {
+					Untitled Project
+				}
+			</span>
+			<!-- Edit icon, only visible on hover -->
+			<div class="ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+					<path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"></path>
+				</svg>
+			</div>
+		</button>
+	</div>
+}
