@@ -104,7 +104,7 @@ func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
 
 	// Session creation
 	app.Post("/create-session", middleware.ProtectedMiddleware(handlers.Store), handlers.CreateSessionHandler)
-	app.Post("/test-create-session", handlers.TestSessionHandler)
+	app.Post("/test-create-session", middleware.ProtectedMiddleware(handlers.Store), handlers.TestSessionHandler)
 
 	// Session viewing and editing
 	app.Get("/session/:id", middleware.ProtectedMiddleware(handlers.Store), handlers.SessionPageHandler)
