@@ -1,0 +1,95 @@
+package pages
+
+import (
+	"planning-poker/cmd/web/design/templates"
+	"planning-poker/internal/server/models"
+	"strconv"
+	"strings"
+	"fmt"
+	"planning-poker/cmd/web/design/organisms"
+)
+
+templ SessionPage(session models.Session) {
+	@templates.DashTemplate() {
+		<div class="w-full h-full min-h-screen bg-background-default text-white flex flex-col">
+			<div class="flex justify-between items-center px-12 pt-10 pb-4">
+				@organisms.SessionTitle(&session)
+				<div class="flex items-center">
+					for i, participant := range session.Participants {
+						if i < 5 {
+							<div
+								class="w-14 h-14 rounded-full bg-secondary-700 flex items-center justify-center text-xl font-bold border-2 border-primary-500 shadow
+                    if (participant.IsOnline) { ring-2 ring-primary-400 }
+                    if (i > 0) { -ml-2 }"
+								title={ participant.User.Name }
+							>
+								{ Initials(participant.User) }
+							</div>
+						}
+					}
+					if len(session.Participants) > 5 {
+						<div class="w-14 h-14 rounded-full bg-primary-500 flex items-center justify-center text-xl font-bold border-2 border-primary-700 shadow -ml-2">
+							+{ strconv.Itoa(len(session.Participants) - 5) }
+						</div>
+					}
+				</div>
+			</div>
+			<div class="flex-1 flex flex-col items-center">
+				<div class="grid grid-cols-4 gap-8 mt-8">
+					for _, story := range session.UserStories {
+						<div
+							class="relative w-56 h-32 bg-background-paper rounded-lg flex flex-col items-center justify-center text-lg font-medium shadow hover:shadow-lg transition cursor-pointer"
+							hx-get={ "/session/story/edit/" + story.ID }
+							hx-target="#story-popup"
+							hx-trigger="click"
+						>
+							<div class="text-base font-semibold pl-4 pr-8 text-lefr w-full h-2r overflow-hidden">
+								<div class="line-clamp-4">{ story.Title }</div>
+							</div>
+							<div class="absolute bottom-2 right-4 text-2xl font-bold text-primary-400">
+								if story.FinalEstimate != nil {
+									{ *story.FinalEstimate }
+								} else {
+									?
+								}
+							</div>
+						</div>
+					}
+					<button
+						class="w-56 h-32 bg-background-paper rounded-lg flex items-center justify-center text-5xl text-primary-500 hover:bg-primary-700 hover:text-white transition font-bold shadow focus:outline-none"
+						hx-get={ fmt.Sprintf("/session/%s/story/create", session.ID) }
+						hx-target="#story-popup"
+						hx-trigger="click"
+					>
+						+
+					</button>
+				</div>
+				<div id="story-popup"></div>
+			</div>
+		</div>
+	}
+}
+
+// Helper to get initials from user (assuming User has Name or Email)
+func Initials(user *models.User) string {
+	if user == nil {
+		return "??"
+	}
+	name := user.Name
+	if name == "" {
+		// fallback to email
+		parts := strings.Split(user.Email, "@")
+		name = parts[0]
+	}
+	fields := strings.Fields(name)
+	if len(fields) == 0 {
+		return "??"
+	}
+	if len(fields) == 1 {
+		if len(fields[0]) >= 2 {
+			return strings.ToUpper(fields[0][:2])
+		}
+		return strings.ToUpper(fields[0])
+	}
+	return strings.ToUpper(string(fields[0][0]) + string(fields[1][0]))
+}

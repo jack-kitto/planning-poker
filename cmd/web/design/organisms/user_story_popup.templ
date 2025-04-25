@@ -1,0 +1,82 @@
+package organisms
+
+import "github.com/google/uuid"
+import "planning-poker/internal/server/models"
+
+type Story struct {
+	ID          uuid.UUID
+	Title       string
+	Description string
+}
+
+templ UserStoryPopup(story models.UserStory) {
+	<div id="story-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+		<form
+			class="bg-background-paper p-8 rounded-lg w-96 flex flex-col gap-4"
+			hx-post="/session/story/edit/"
+			hx-target="#story-popup"
+			hx-swap="outerHTML"
+		>
+			<input type="hidden" id="session_id" name="session_id" value={ story.SessionID }/>
+			<input type="hidden" id="story_id" name="story_id" value={ story.ID }/>
+			<div class="text-xl font-bold mb-2">Edit User Story</div>
+			<label class="text-sm">Title</label>
+			<input name="title" value={ story.Title } class="w-full p-2 rounded bg-secondary-700 text-white"/>
+			<label class="text-sm">Description</label>
+			<textarea name="description" class="w-full p-2 rounded bg-secondary-700 text-white">{ *story.Description }</textarea>
+			<div class="flex justify-end gap-2 mt-4">
+				<button
+					type="button"
+					class="px-4 py-2 bg-secondary-500 rounded text-white"
+					onclick="document.getElementById('story-popup').innerHTML = ''"
+				>Cancel</button>
+				<button type="submit" class="px-4 py-2 bg-primary-500 rounded text-white">Save</button>
+			</div>
+		</form>
+	</div>
+}
+
+templ CreateStoryPopup(sessionId string) {
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+		<form
+			class="bg-background-paper p-8 rounded-lg w-96 flex flex-col gap-4 shadow-lg"
+			hx-post="/session/story/create"
+			hx-target="#story-popup"
+			hx-swap="outerHTML"
+		>
+			<input type="hidden" id="sessionId" name="sessionId" value={ sessionId }/>
+			<div class="text-xl font-bold mb-2 text-white">Create User Story</div>
+			<label class="text-sm text-secondary-300">Title</label>
+			<input
+				name="title"
+				required
+				maxlength="120"
+				class="w-full p-2 rounded bg-secondary-700 text-white focus:outline-none focus:ring-2 focus:ring-primary-400"
+				placeholder="Enter story title"
+			/>
+			<label class="text-sm text-secondary-300">Description</label>
+			<textarea
+				name="description"
+				rows="4"
+				maxlength="1000"
+				class="w-full p-2 rounded bg-secondary-700 text-white focus:outline-none focus:ring-2 focus:ring-primary-400"
+				placeholder="Enter story description"
+			></textarea>
+			<div class="flex justify-end gap-2 mt-4">
+				<button
+					type="button"
+					class="px-4 py-2 bg-secondary-500 rounded text-white hover:bg-secondary-600 transition"
+					onclick="document.getElementById('story-popup').innerHTML = ''"
+				>
+					Cancel
+				</button>
+				<button
+					type="submit"
+					class="px-4 py-2 bg-primary-500 rounded text-white hover:bg-primary-600 transition"
+				>
+					Create
+				</button>
+			</div>
+		</form>
+	</div>
+}

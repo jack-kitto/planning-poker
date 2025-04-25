@@ -50,19 +50,8 @@ templ DashboardPage(user *models.User) {
 							@atoms.H3() {
 								Create New Session
 							}
-							<form class="space-y-4">
+							<form method="POST" action="/create-session" class="space-y-4">
 								@molecules.FormField("session-name", "session-name", "text", "Session Name", "e.g., Sprint Planning", true)
-								@molecules.FormSelect("estimation-type", "estimation-type", "Estimation Type", true) {
-									@atoms.Option("fibonacci", false) {
-										Fibonacci (1, 2, 3, 5, 8, 13, 21)
-									}
-									@atoms.Option("tshirt", false) {
-										T-Shirt Sizes (XS, S, M, L, XL)
-									}
-									@atoms.Option("powers", false) {
-										Powers of 2 (1, 2, 4, 8, 16, 32)
-									}
-								}
 								@atoms.Button(atoms.ButtonPrimary, atoms.ButtonMedium, true, templ.ComponentScript{}) {
 									Create Session
 								}

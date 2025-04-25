@@ -41,3 +41,12 @@ func (s *service) CreateOrg(name string, user *models.User) (*models.Organisatio
 
 	return org, nil
 }
+
+func (s *service) GetOrg(ID string) (*models.Organisation, error) {
+	org := new(models.Organisation)
+	err := s.db.NewSelect().Model(org).Where("id = ?", ID).Scan(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return org, nil
+}
