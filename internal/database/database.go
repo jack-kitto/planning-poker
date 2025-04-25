@@ -27,6 +27,10 @@ type Service interface {
 	GetOrg(id string) (*models.Organisation, error)
 	CreateOrgMember(org *models.Organisation, user *models.User) (*models.OrganisationMember, error)
 	GetUser(email string) (*models.User, error)
+	CreateSession(org *models.Organisation, owner *models.User, name string) (*models.Session, error)
+	GetSession(id string) (*models.Session, error)
+	UpdateSessionName(id string, name string) error
+	CreateSessionParticipant(sesh *models.Session, owner *models.User) (*models.SessionParticipant, error)
 }
 
 type service struct {
