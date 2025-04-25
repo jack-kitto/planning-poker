@@ -40,6 +40,7 @@ type Config struct {
 
 	// Session configuration
 	SessionExpiration time.Duration `env:"SESSION_EXPIRATION" envDefault:"24h"`
+	AUTH_BYPASS       string        `env:"AUTH_BYPASS" envDefault:"false"`
 }
 
 func Load() (*Config, error) {

@@ -27,6 +27,12 @@ func generateEmailTemplate(link string) string {
             border-radius: 4px; 
             font-weight: bold; 
             margin: 20px 0;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #3730a3;
+            color: white;
+            text-decoration: none;
         }
         .footer { 
             margin-top: 30px; 
@@ -58,4 +64,64 @@ func generateEmailTemplate(link string) string {
 </body>
 </html>
 `, link, year)
+}
+
+func generateInviteEmailTemplate(inviter, sessionLink string) string {
+	year := time.Now().Year()
+	return fmt.Sprintf(`
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>You're Invited to a Planning Poker Session</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .logo { max-width: 150px; margin-bottom: 20px; }
+        .button { 
+            display: inline-block; 
+            padding: 12px 24px; 
+            background-color: #6366F1; /* primary-500 */
+            color: white; 
+            text-decoration: none; 
+            border-radius: 4px; 
+            font-weight: bold; 
+            margin: 20px 0;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #4F46E5; /* darker shade */
+            color: white;
+            text-decoration: none;
+        }
+        .footer { 
+            margin-top: 30px; 
+            font-size: 12px; 
+            color: #666; 
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>You're Invited to Planning Poker!</h1>
+    </div>
+    
+    <p>Hello,</p>
+    
+    <p><b>%s</b> has invited you to join a Planning Poker session.</p>
+    
+    <div style="text-align: center;">
+        <a href="%s" class="button">Join Session</a>
+    </div>
+    
+    <p>If you do not recognize this invitation, you can safely ignore this email.</p>
+    
+    <div class="footer">
+        <p>This invitation link will expire in 24 hours and can only be used once.</p>
+        <p>© %d Planning Poker. All rights reserved.</p>
+    </div>
+</body>
+</html>
+`, inviter, sessionLink, year)
 }

@@ -1,0 +1,41 @@
+package organisms
+
+templ InviteUserPopup(sessionId string) {
+	<div id="invite-popup" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+		<form
+			class="bg-background-paper p-8 rounded-lg w-96 flex flex-col gap-4 shadow-lg"
+			hx-post="/session/invite"
+			hx-target="#invite-popup"
+			hx-swap="outerHTML"
+		>
+			<input type="hidden" name="sessionId" value={ sessionId }/>
+			<div class="text-xl font-bold mb-2 text-white">Invite User</div>
+			<label class="text-sm text-secondary-300" for="invite-email">User Email</label>
+			<input
+				id="invite-email"
+				name="email"
+				type="email"
+				required
+				maxlength="120"
+				class="w-full p-2 rounded bg-secondary-700 text-white focus:outline-none focus:ring-2 focus:ring-primary-400"
+				placeholder="Enter user email"
+				autocomplete="email"
+			/>
+			<div class="flex justify-end gap-2 mt-4">
+				<button
+					type="button"
+					class="px-4 py-2 bg-secondary-500 rounded text-white hover:bg-secondary-600 transition"
+					onclick="document.getElementById('invite-popup').innerHTML = ''"
+				>
+					Cancel
+				</button>
+				<button
+					type="submit"
+					class="px-4 py-2 bg-primary-500 rounded text-white hover:bg-primary-600 transition"
+				>
+					Invite
+				</button>
+			</div>
+		</form>
+	</div>
+}

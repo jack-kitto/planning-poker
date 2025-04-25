@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"planning-poker/cmd/web/design/organisms"
 	"planning-poker/cmd/web/pages"
@@ -10,6 +11,7 @@ import (
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
+	"github.com/resend/resend-go/v2"
 )
 
 func (h *Handlers) TestSessionHandler(c *fiber.Ctx) error {
@@ -145,4 +147,63 @@ func (h *Handlers) SessionTitleHandler(c *fiber.Ctx) error {
 		return err
 	}
 	return adaptor.HTTPHandler(templ.Handler(organisms.SessionTitle(session)))(c)
+}
+
+func (h *Handlers) InviteUserToSessionFormHandler(c *fiber.Ctx) error {
+	sessionId := c.Params("id")
+	return adaptor.HTTPHandler(templ.Handler(organisms.InviteUserPopup(sessionId)))(c)
+}
+
+func (h *Handlers) HandleSessionInvitation(c *fiber.Ctx) error {
+	sessionId := c.FormValue("sessionId")
+	email := c.FormValue("email")
+	log.Println("HandleSessionInvitation", sessionId, email)
+
+	sess, err := h.Store.Get(c)
+	if err != nil {
+		return err
+	}
+
+	session, err := h.DB.GetSession(sessionId)
+	if err != nil {
+		return err
+	}
+
+	userData := sess.Get("user")
+	if userData == nil {
+		return c.Status(http.StatusUnauthorized).SendString("Unauthorized")
+	}
+
+	user, ok := userData.(models.User)
+	if !ok {
+		return c.Status(http.StatusInternalServerError).SendString("Invalid user data")
+	}
+	link := fmt.Sprintf("%s/session/%s", h.Config.BaseURL, sessionId)
+	err = h.sendInvitation(email, fmt.Sprintf("%s has invited you to join %s", user.Name, session.Name), link, user.Name)
+	if err != nil {
+		return err
+	}
+	c.Set("HX-Redirect", fmt.Sprintf("/test/session/%s", sessionId))
+	return c.SendString("")
+}
+
+func (h *Handlers) sendInvitation(to string, subject string, link string, from string) error {
+	client := resend.NewClient(h.Config.EmailServerPassword)
+
+	html := generateInviteEmailTemplate(from, link)
+
+	params := &resend.SendEmailRequest{
+		From:    h.Config.EmailFrom,
+		To:      []string{to},
+		Subject: subject,
+		Html:    html,
+	}
+
+	_, err := client.Emails.Send(params)
+	if err != nil {
+		log.Printf("Failed to send email: %v", err)
+		return err
+	}
+
+	return nil
 }

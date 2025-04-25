@@ -102,16 +102,15 @@ func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
 	// Session Management
 	// ==========================================
 
-	// Session creation
 	app.Post("/create-session", middleware.ProtectedMiddleware(handlers.Store), handlers.CreateSessionHandler)
-	app.Post("/test-create-session", handlers.TestSessionHandler)
-
-	// Session viewing and editing
+	app.Post("/test-create-session", middleware.ProtectedMiddleware(handlers.Store), handlers.TestSessionHandler)
 	app.Get("/session/:id", middleware.ProtectedMiddleware(handlers.Store), handlers.SessionPageHandler)
 	app.Get("/test/session/:id", middleware.ProtectedMiddleware(handlers.Store), handlers.SessionPageHandler)
 	app.Get("/session/:id/edit-title-form", middleware.ProtectedMiddleware(handlers.Store), handlers.EditSessionTitleFormHandler)
 	app.Post("/session/:id/edit-title", middleware.ProtectedMiddleware(handlers.Store), handlers.EditSessionNameHandler)
 	app.Get("/session/:id/title", middleware.ProtectedMiddleware(handlers.Store), handlers.SessionTitleHandler)
+	app.Get("/session/:id/invite", middleware.ProtectedMiddleware(handlers.Store), handlers.InviteUserToSessionFormHandler)
+	app.Post("/session/invite", middleware.ProtectedMiddleware(handlers.Store), handlers.HandleSessionInvitation)
 
 	// ==========================================
 	// Story Management
