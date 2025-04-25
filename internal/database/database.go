@@ -31,6 +31,9 @@ type Service interface {
 	GetSession(id string) (*models.Session, error)
 	UpdateSessionName(id string, name string) error
 	CreateSessionParticipant(sesh *models.Session, owner *models.User) (*models.SessionParticipant, error)
+	CreateStory(sesh *models.Session, title string, description *string, index string) (*models.UserStory, error)
+	GetUserStory(id string) (*models.UserStory, error)
+	UpdateStory(id string, title string, description string) error
 }
 
 type service struct {
