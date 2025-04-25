@@ -157,7 +157,6 @@ func (h *Handlers) InviteUserToSessionFormHandler(c *fiber.Ctx) error {
 func (h *Handlers) HandleSessionInvitation(c *fiber.Ctx) error {
 	sessionId := c.FormValue("sessionId")
 	email := c.FormValue("email")
-	log.Println("HandleSessionInvitation", sessionId, email)
 
 	sess, err := h.Store.Get(c)
 	if err != nil {
@@ -165,6 +164,16 @@ func (h *Handlers) HandleSessionInvitation(c *fiber.Ctx) error {
 	}
 
 	session, err := h.DB.GetSession(sessionId)
+	if err != nil {
+		return err
+	}
+
+	userToAdd, err := h.DB.GetUser(email)
+	if err != nil {
+		return err
+	}
+
+	_, err = h.DB.CreateSessionParticipant(session, userToAdd)
 	if err != nil {
 		return err
 	}
