@@ -35,6 +35,20 @@ func (s *service) GetUser(email string) (*models.User, error) {
 	return user, nil
 }
 
+func (s *service) GetUserWithOrg(email string) (*models.User, error) {
+	user := new(models.User)
+	err := s.db.NewSelect().
+		Model(user).
+		Relation("OrganisationMembers.Organisation"). // Joins orgs through org members
+		Where("u.email = ?", email).
+		Scan(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
 func (s *service) UpdateUser(name string, email string) (*models.User, error) {
 	user := &models.User{
 		Name: name,
