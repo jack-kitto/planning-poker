@@ -55,7 +55,7 @@ func (h *Handlers) CreateSessionHandler(c *fiber.Ctx) error {
 		return err
 	}
 
-	session_name := c.FormValue("name")
+	session_name := c.FormValue("session-name")
 
 	userData := sess.Get("user")
 	if userData == nil {
