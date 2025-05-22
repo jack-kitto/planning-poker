@@ -1,0 +1,52 @@
+package organisms
+
+import "planning-poker/internal/server/models"
+
+import (
+	"strconv"
+	"strings"
+)
+
+templ ParticipantsList(session *models.Session) {
+	for i, participant := range session.Participants {
+		if i < 5 {
+			<div
+				class="w-14 h-14 rounded-full bg-secondary-700 flex items-center justify-center text-xl font-bold border-2 border-primary-500 shadow
+                    if (participant.IsOnline) { ring-2 ring-primary-400 }
+                    if (i > 0) { -ml-2 }"
+				title={ participant.User.Name }
+			>
+				{ Initials(participant.User) }
+			</div>
+		}
+	}
+	if len(session.Participants) > 5 {
+		<div class="w-14 h-14 rounded-full bg-primary-500 flex items-center justify-center text-xl font-bold border-2 border-primary-700 shadow -ml-2">
+			+{ strconv.Itoa(len(session.Participants) - 5) }
+		</div>
+	}
+}
+
+// Helper to get initials from user (assuming User has Name or Email)
+func Initials(user *models.User) string {
+	if user == nil {
+		return "??"
+	}
+	name := user.Name
+	if name == "" {
+		// fallback to email
+		parts := strings.Split(user.Email, "@")
+		name = parts[0]
+	}
+	fields := strings.Fields(name)
+	if len(fields) == 0 {
+		return "??"
+	}
+	if len(fields) == 1 {
+		if len(fields[0]) >= 2 {
+			return strings.ToUpper(fields[0][:2])
+		}
+		return strings.ToUpper(fields[0])
+	}
+	return strings.ToUpper(string(fields[0][0]) + string(fields[1][0]))
+}
