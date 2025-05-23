@@ -71,6 +71,7 @@ type SessionParticipant struct {
 	SessionID string    `bun:"session_id,pk,type:varchar(25)"`
 	UserID    string    `bun:"user_id,pk,type:varchar(25)"`
 	IsOnline  bool      `bun:"is_online,notnull,default:false"`
+	LastSeen  time.Time `bun:"last_seen,notnull,default:current_timestamp"`
 	JoinedAt  time.Time `bun:"joined_at,notnull,default:current_timestamp"`
 
 	// Relations
