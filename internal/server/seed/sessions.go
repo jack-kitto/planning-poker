@@ -51,6 +51,7 @@ func seedSessions(ctx context.Context, organisations []*models.Organisation, use
 					SessionID: session.ID,
 					UserID:    userID,
 					IsOnline:  gofakeit.Bool(), // Random online status
+					LastSeen:  gofakeit.DateRange(time.Now().AddDate(0, -1, 0), time.Now()),
 					JoinedAt:  gofakeit.DateRange(time.Now().AddDate(0, -1, 0), time.Now()),
 				}
 				sessionParticipants = append(sessionParticipants, participant)
