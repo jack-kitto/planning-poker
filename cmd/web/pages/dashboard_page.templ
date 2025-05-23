@@ -1,4 +1,3 @@
-// cmd/web/pages/dashboard_page.templ
 package pages
 
 import "planning-poker/cmd/web/design/templates"
@@ -6,8 +5,10 @@ import "planning-poker/cmd/web/design/organisms"
 import "planning-poker/cmd/web/design/atoms"
 import "planning-poker/cmd/web/design/molecules"
 import "planning-poker/internal/server/models"
+import "time"
+import "fmt"
 
-templ DashboardPage(user *models.User) {
+templ DashboardPage(user *models.User, sessions []*models.Session) {
 	@templates.DashTemplate() {
 		<div class="w-full h-full bg-gray-900 text-white flex flex-col items-center">
 			<!-- Dashboard Header -->
@@ -21,28 +22,44 @@ templ DashboardPage(user *models.User) {
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<!-- Recent Sessions -->
 						@atoms.Card("bg-gray-700", "p-4") {
-							@atoms.H3() {
-								Recent Sessions
-							}
+							<div class="flex items-center justify-between">
+								@atoms.H3() {
+									Recent Sessions
+								}
+								<div
+									id="open-sessions-modal"
+									class="cursor-pointer ml-2 p-1 rounded hover:bg-gray-600"
+									onclick="
+                        document.getElementById('sessions-modal').classList.remove('hidden');
+                        document.getElementById('sessions-modal').classList.add('flex');
+                  "
+								>
+									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path>
+									</svg>
+								</div>
+							</div>
 							<div class="space-y-3">
-								<div class="bg-gray-600 p-3 rounded flex justify-between items-center">
-									<div>
-										<div class="font-medium">Sprint Planning #42</div>
-										<div class="text-sm text-gray-400">Created 2 days ago</div>
-									</div>
-									@atoms.ButtonLink("#", atoms.ButtonPrimary, atoms.ButtonSmall, false) {
-										Join
+								for i, session := range sessions {
+									if i < 3 {
+										<div class="bg-gray-600 p-3 rounded flex justify-between items-center">
+											<div>
+												<div class="font-medium">
+													{ session.Name }
+												</div>
+												<div class="text-sm text-gray-400">
+													Created { formatRelativeTime(session.CreatedAt) }
+												</div>
+											</div>
+											@atoms.ButtonLink(templ.SafeURL(fmt.Sprintf("/session/%s", session.ID)), atoms.ButtonPrimary, atoms.ButtonSmall, false) {
+												Join 
+											}
+										</div>
 									}
-								</div>
-								<div class="bg-gray-600 p-3 rounded flex justify-between items-center">
-									<div>
-										<div class="font-medium">Bug Estimation</div>
-										<div class="text-sm text-gray-400">Created 5 days ago</div>
-									</div>
-									@atoms.ButtonLink("#", atoms.ButtonPrimary, atoms.ButtonSmall, false) {
-										Join
-									}
-								</div>
+								}
+								if len(sessions) == 0 {
+									<div class="text-gray-400 text-sm">No sessions yet.</div>
+								}
 							</div>
 						}
 						<!-- Create New Session -->
@@ -69,6 +86,60 @@ templ DashboardPage(user *models.User) {
 					</div>
 				}
 			</div>
+			<!-- Modal for all sessions -->
+			<div id="sessions-modal" class="fixed inset-0 z-50 bg-black bg-opacity-60 items-center justify-center hidden w-screen h-screen">
+				<div class="bg-gray-800 rounded-lg shadow-lg w-full max-w-2xl p-6 relative">
+					<button class="absolute top-2 right-2 text-gray-400 hover:text-white" onclick="document.getElementById('sessions-modal').classList.add('hidden')">
+						&times;
+					</button>
+					<div class="mb-4 flex items-center">
+						<input id="session-search" type="text" placeholder="Search sessions..." class="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none" oninput="filterSessions()"/>
+					</div>
+					<div id="sessions-list" class="max-h-96 overflow-y-auto space-y-2">
+						for _, session := range sessions {
+							<div class="bg-gray-700 p-3 rounded flex justify-between items-center session-row">
+								<div>
+									<div class="font-medium">
+										{ session.Name }
+									</div>
+									<div class="text-sm text-gray-400">
+										Created @formatRelativeTime(session.CreatedAt)
+									</div>
+								</div>
+								@atoms.ButtonLink(templ.SafeURL(fmt.Sprintf("/session/%s", session.ID)), atoms.ButtonPrimary, atoms.ButtonSmall, false) {
+									Join
+								}
+							</div>
+						}
+						if len(sessions) == 0 {
+							<div class="text-gray-400 text-sm">No sessions found.</div>
+						}
+					</div>
+				</div>
+			</div>
+			<script>
+        function filterSessions() {
+          const input = document.getElementById('session-search').value.toLowerCase();
+          document.querySelectorAll('.session-row').forEach(row => {
+            const name = row.querySelector('.font-medium').textContent.toLowerCase();
+            row.style.display = name.includes(input) ? '' : 'none';
+          });
+        }
+      </script>
 		</div>
+	}
+}
+
+func formatRelativeTime(t time.Time) string {
+	now := time.Now()
+	diff := now.Sub(t)
+	if diff < time.Minute {
+		return "just now"
+	} else if diff < time.Hour {
+		return fmt.Sprintf("%d minutes ago", int(diff.Minutes()))
+	} else if diff < 24*time.Hour {
+		return fmt.Sprintf("%d hours ago", int(diff.Hours()))
+	} else {
+		return fmt.Sprintf("%d days ago", int(diff.Hours()/24))
 	}
 }
