@@ -1,14 +1,18 @@
 package handlers
 
 import (
+	"bytes"
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"planning-poker/cmd/web/design/organisms"
 	"planning-poker/cmd/web/pages"
 	"planning-poker/internal/server/models"
+	"sync"
 
 	"github.com/a-h/templ"
+	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/resend/resend-go/v2"
@@ -85,20 +89,6 @@ func (h *Handlers) CreateSessionHandler(c *fiber.Ctx) error {
 	}
 
 	return c.Redirect(fmt.Sprintf("/session/%s", session.ID))
-}
-
-func (h *Handlers) SessionPageHandler(c *fiber.Ctx) error {
-	id := c.Params("id")
-	if id == "" {
-		return c.Status(http.StatusInternalServerError).SendString("Could not find session identifier")
-	}
-
-	session, err := h.DB.GetSession(id)
-	if err != nil {
-		return err
-	}
-
-	return adaptor.HTTPHandler(templ.Handler(pages.SessionPage(*session)))(c)
 }
 
 func (h *Handlers) GetSessionHandler(c *fiber.Ctx) error {
@@ -215,4 +205,36 @@ func (h *Handlers) sendInvitation(to string, subject string, link string, from s
 	}
 
 	return nil
+}
+
+func (h *Handlers) SessionPageHandler(c *fiber.Ctx) error {
+	log.Printf("[SessionPageHandler] start")
+	id := c.Params("id")
+	if id == "" {
+		log.Printf("[SessionPageHandler] no id found")
+		return c.Status(http.StatusInternalServerError).SendString("Could not find session identifier")
+	} else {
+		log.Printf("[SessionPageHandler] found id %s", id)
+	}
+
+	sess, err := h.Store.Get(c)
+	if err != nil {
+		return err
+	} else {
+		log.Printf("[SessionPageHandler] found session")
+	}
+	userData := sess.Get("user")
+	user, ok := userData.(models.User)
+	if !ok {
+		log.Printf("[SessionPageHandler] Could not find user")
+		return c.Redirect("/login")
+	}
+	log.Printf("[SessionPageHandler] found user in session. Hi %s", user.Name)
+
+	session, err := h.DB.GetSession(id)
+	if err != nil {
+		return err
+	}
+
+	return adaptor.HTTPHandler(templ.Handler(pages.SessionPage(session, &user)))(c)
 }
