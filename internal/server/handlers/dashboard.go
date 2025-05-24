@@ -25,6 +25,9 @@ func (h *Handlers) DashboardHandler(c *fiber.Ctx) error {
 	if !ok {
 		return c.Status(http.StatusInternalServerError).SendString("Invalid user data")
 	}
-
-	return adaptor.HTTPHandler(templ.Handler(pages.DashboardPage(&sessionUser)))(c)
+	sessions, err := h.DB.GetSessionsForUser(sessionUser.ID)
+	if err != nil {
+		return err
+	}
+	return adaptor.HTTPHandler(templ.Handler(pages.DashboardPage(&sessionUser, sessions)))(c)
 }
