@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"log"
 	"planning-poker/internal/server/models"
 	"time"
 
@@ -58,6 +59,7 @@ func (s *service) CreateSessionParticipant(sesh *models.Session, owner *models.U
 }
 
 func (s *service) DeactivateSessionParticipant(sesh *models.Session, user *models.User) error {
+	log.Println("[DeactivateSessionParticipant] start")
 	seshParticipant := &models.SessionParticipant{
 		IsOnline: false,
 	}
