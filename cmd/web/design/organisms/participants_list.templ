@@ -7,22 +7,36 @@ import (
 	"strings"
 )
 
+func GetOnline(session *models.Session) []models.SessionParticipant {
+
+	online := []models.SessionParticipant{}
+	for _, participant := range session.Participants {
+		if participant.IsOnline {
+			online = append(online, *participant)
+		}
+	}
+	return online
+}
+
+// if (participant.IsOnline) { ring-2 ring-primary-400 }
+//                    if (i > 0) { -ml-2 }
 templ ParticipantsList(session *models.Session) {
-	for i, participant := range session.Participants {
+	// Collect only online participants
+	// Render up to 5 online participants
+	for i, participant := range GetOnline(session) {
 		if i < 5 {
 			<div
-				class="w-14 h-14 rounded-full bg-secondary-700 flex items-center justify-center text-xl font-bold border-2 border-primary-500 shadow
-                    if (participant.IsOnline) { ring-2 ring-primary-400 }
-                    if (i > 0) { -ml-2 }"
+				class="w-14 h-14 rounded-full bg-secondary-700 flex items-center justify-center text-xl font-bold border-2 border-primary-500 shadow "
 				title={ participant.User.Name }
 			>
 				{ Initials(participant.User) }
 			</div>
 		}
 	}
-	if len(session.Participants) > 5 {
+	// Show "+N" for extra online participants
+	if len(GetOnline(session)) > 5 {
 		<div class="w-14 h-14 rounded-full bg-primary-500 flex items-center justify-center text-xl font-bold border-2 border-primary-700 shadow -ml-2">
-			+{ strconv.Itoa(len(session.Participants) - 5) }
+			+{ strconv.Itoa(len(GetOnline(session)) - 5) }
 		</div>
 	}
 }
