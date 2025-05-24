@@ -5,20 +5,23 @@ import (
 	"planning-poker/internal/server/models"
 	"fmt"
 	"planning-poker/cmd/web/design/organisms"
+	// "planning-poker/cmd/web/scripts"
 )
 
-templ SessionPage(session models.Session) {
+templ SessionPage(session *models.Session, user *models.User) {
 	@templates.DashTemplate() {
+		<!-- @scripts.SessionHeartbeatScript(session.ID) -->
 		<div class="w-full h-full min-h-screen bg-background-default text-white flex flex-col">
 			<div class="flex justify-between items-center px-12 pt-10 pb-4">
-				@organisms.SessionTitle(&session)
+				@organisms.SessionTitle(session)
 				<div
 					class="flex items-center"
-					id="participants-list"
 					hx-ext="ws"
-					ws-connect={ "/ws/session/" + session.ID }
+					ws-connect={ "/ws/session/" + session.ID + "/" + user.ID }
 				>
-					@organisms.ParticipantsList(&session)
+					<div id="participants-list flex">
+						@organisms.ParticipantsList(session)
+					</div>
 					<button
 						class="w-14 h-14 rounded-full bg-secondary-700 ring-2 ring-primary-400 hover:bg-primary-500 flex items-center justify-center text-xl font-bold border-2 border-primary-700 shadow -ml-2 transition-all duration-300 ease-in-out transform hover:scale-110 hover:rotate-12 hover:shadow-lg hover:ring-primary-300 active:scale-95 active:rotate-0 active:bg-primary-600 active:shadow-inner"
 						title="Invite participants"
