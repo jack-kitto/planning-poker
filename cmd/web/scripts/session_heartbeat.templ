@@ -1,0 +1,9 @@
+package scripts
+
+templ SessionHeartbeatScript(sessionID string, userID string) {
+	<div hx-ext="ws" ws-connect={ "/ws/session/" + sessionID + "/" + userID }>
+		<form ws-send hx-trigger="load" class="hidden">
+			<input name="type" value="heartbeat" class="hidden"/>
+		</form>
+	</div>
+}
