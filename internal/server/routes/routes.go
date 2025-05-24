@@ -136,4 +136,5 @@ func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
 
 	// Real-time communication
 	app.Get("/websocket", websocket.New(handlers.WebsocketHandler))
+	app.Get("/ws/session/:session_id/:user_id", websocket.New(handlers.SessionParticipantsWebsocketHandler))
 }

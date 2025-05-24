@@ -238,3 +238,174 @@ func (h *Handlers) SessionPageHandler(c *fiber.Ctx) error {
 
 	return adaptor.HTTPHandler(templ.Handler(pages.SessionPage(session, &user)))(c)
 }
+
+var (
+	sessionClients   = make(map[string]map[*websocket.Conn]bool)
+	sessionClientsMu sync.Mutex
+)
+
+func (h *Handlers) SessionParticipantsWebsocketHandler(c *websocket.Conn) {
+	log.Printf("[SessionParticipantsWebsocketHandler] start")
+	user_id := c.Params("user_id")
+	session_id := c.Params("session_id")
+	log.Printf("Websocket params: user_id=%s, session_id=%s", user_id, session_id)
+
+	// Add connection to sessionClients
+	sessionClientsMu.Lock()
+	if sessionClients[session_id] == nil {
+		sessionClients[session_id] = make(map[*websocket.Conn]bool)
+	}
+	sessionClients[session_id][c] = true
+	log.Printf("Session %s now has %d clients", session_id, len(sessionClients[session_id]))
+	sessionClientsMu.Unlock()
+
+	// Now call HandleSessionJoin
+	h.HandleSessionJoin(session_id, user_id)
+
+	defer func() {
+		// Remove connection from sessionClients
+		sessionClientsMu.Lock()
+		delete(sessionClients[session_id], c)
+		if len(sessionClients[session_id]) == 0 {
+			delete(sessionClients, session_id)
+		}
+		log.Printf("Session %s now has %d clients", session_id, len(sessionClients[session_id]))
+		sessionClientsMu.Unlock()
+
+		h.HandleSessionLeave(session_id, user_id)
+	}()
+
+	for {
+		_, _, err := c.ReadMessage()
+		if err != nil {
+			log.Printf("Websocket read error: %v", err)
+			break
+		}
+	}
+}
+
+func (h *Handlers) HandleSessionJoin(session_id string, user_id string) {
+	log.Printf("[HandleSessionJoin] start - session_id=%s, user_id=%s", session_id, user_id)
+	session, err := h.DB.GetSession(session_id)
+	if err != nil {
+		log.Printf("[HandleSessionJoin] GetSession error: %v", err)
+		return
+	}
+	log.Printf("[HandleSessionJoin] Found session with ID: %s", session.ID)
+
+	user, err := h.DB.GetUserById(user_id)
+	if err != nil {
+		log.Printf("[HandleSessionJoin] GetUserById error: %v", err)
+		return
+	}
+	log.Printf("[HandleSessionJoin] Found user: %s", user.Name)
+
+	err = h.DB.ActivateSessionParticipant(session, user)
+	if err != nil {
+		log.Printf("[HandleSessionJoin] ActivateSessionParticipant error: %v", err)
+	}
+
+	err = h.sendParticipantsList(session.ID)
+	if err != nil {
+		log.Printf("[HandleSessionJoin] sendParticipantsList error: %v", err)
+	}
+}
+
+func (h *Handlers) HandleSessionLeave(session_id string, user_id string) {
+	log.Printf("[HandleSessionLeave] start - session_id=%s, user_id=%s", session_id, user_id)
+	session, err := h.DB.GetSession(session_id)
+	if err != nil {
+		log.Printf("[HandleSessionLeave] GetSession error: %v", err)
+		return
+	}
+	log.Printf("[HandleSessionLeave] Found session with ID: %s", session.ID)
+
+	user, err := h.DB.GetUserById(user_id)
+	if err != nil {
+		log.Printf("[HandleSessionLeave] GetUserById error: %v", err)
+		return
+	}
+	log.Printf("[HandleSessionLeave] Found user: %s", user.Name)
+
+	err = h.DB.DeactivateSessionParticipant(session, user)
+	if err != nil {
+		log.Printf("[HandleSessionLeave] DeactivateSessionParticipant error: %v", err)
+	}
+
+	err = h.sendParticipantsList(session.ID)
+	if err != nil {
+		log.Printf("[HandleSessionLeave] sendParticipantsList error: %v", err)
+	}
+}
+
+func (h *Handlers) sendParticipantsList(session_id string) error {
+	session, err := h.DB.GetSession(session_id)
+	if err != nil {
+		log.Printf("[sendParticipantsList] GetSession error: %v", err)
+		return err
+	}
+	log.Printf("[sendParticipantsList] start - session.ID=%s", session.ID)
+
+	// Debug logs...
+	log.Printf("[sendParticipantsList] Total participants: %d", len(session.Participants))
+	for i, participant := range session.Participants {
+		log.Printf("[sendParticipantsList] Participant %d: %s (IsOnline: %t)",
+			i, participant.User.Name, participant.IsOnline)
+	}
+
+	online := organisms.GetOnline(session)
+	log.Printf("[sendParticipantsList] Online participants: %d", len(online))
+
+	var buf bytes.Buffer
+	err = organisms.ParticipantsList(session).Render(context.Background(), &buf)
+	if err != nil {
+		log.Printf("[sendParticipantsList] Render error: %v", err)
+		return err
+	}
+
+	// Wrap the HTML in an HTMX-compatible format that targets the participants-list
+	html := fmt.Sprintf(`<div id="participants-list" hx-swap-oob="innerHTML">%s</div>`, buf.String())
+
+	// html := buf.String()
+
+	log.Printf("[sendParticipantsList] Rendered HTML length: %d", len(html))
+
+	sessionClientsMu.Lock()
+	defer sessionClientsMu.Unlock()
+
+	clients, ok := sessionClients[session.ID]
+	if !ok {
+		log.Printf("[sendParticipantsList] No clients map for session %s", session.ID)
+		return nil
+	}
+
+	if len(clients) == 0 {
+		log.Printf("[sendParticipantsList] No clients in session %s", session.ID)
+		return nil
+	}
+
+	log.Printf("[sendParticipantsList] Sending to %d clients", len(clients))
+
+	for conn := range clients {
+		if err := conn.WriteMessage(websocket.TextMessage, []byte(html)); err != nil {
+			log.Printf("[sendParticipantsList] Error writing to websocket: %v", err)
+			delete(clients, conn)
+			err = conn.Close()
+			if err != nil {
+				return err
+			}
+		} else {
+			log.Printf("[sendParticipantsList] Successfully sent message to client")
+		}
+	}
+	return nil
+}
+
+// Helper function to debug available session keys
+func getSessionKeys() []string {
+	keys := make([]string, 0, len(sessionClients))
+	for k := range sessionClients {
+		keys = append(keys, k)
+	}
+	return keys
+}
