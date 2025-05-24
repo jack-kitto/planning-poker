@@ -18,7 +18,7 @@ func (h *Handlers) DashboardHandler(c *fiber.Ctx) error {
 
 	user := sess.Get("user")
 	if user == nil {
-		return c.Status(http.StatusUnauthorized).SendString("Unauthorized")
+		return c.Redirect("/login")
 	}
 
 	sessionUser, ok := user.(models.User)
