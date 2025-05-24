@@ -26,6 +26,7 @@ type Service interface {
 	CreateUser(name string, email string) (*models.User, error)
 	UpdateUser(name string, email string) (*models.User, error)
 	GetUser(email string) (*models.User, error)
+	GetUserById(id string) (*models.User, error)
 	GetUserWithOrg(email string) (*models.User, error)
 
 	// Organisation operations
