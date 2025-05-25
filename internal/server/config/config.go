@@ -8,6 +8,10 @@ import (
 )
 
 type Config struct {
+	// Redis configuration
+	RedisPort    int    `env:"REDIS_PORT" envDefault:"6379"`
+	RedisBaseURL string `env:"REDIS_BASE_URL" envDefault:"http://localhost:6379"`
+
 	// Server configuration
 	Port          string `env:"PORT" envDefault:"8080"`
 	BaseURL       string `env:"BASE_URL" envDefault:"http://localhost:8080"`

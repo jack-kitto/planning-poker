@@ -1,6 +1,8 @@
 package session
 
 import (
+	"log"
+	"planning-poker/internal/server/config"
 	"time"
 
 	"github.com/gofiber/fiber/v2/middleware/session"
@@ -14,9 +16,13 @@ var (
 )
 
 func InitSessionStore() {
+	config, err := config.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
 	redisStore := redis.New(redis.Config{
-		Host:     "localhost", // Change if your Redis is elsewhere
-		Port:     6379,
+		Host:     config.RedisBaseURL,
+		Port:     config.RedisPort,
 		Password: "",
 		Database: 0,
 		Reset:    false,
