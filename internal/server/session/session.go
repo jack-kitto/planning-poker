@@ -21,9 +21,7 @@ func InitSessionStore() {
 		log.Fatal(err)
 	}
 	redisStore := redis.New(redis.Config{
-		Host:     config.RedisBaseURL,
-		Port:     config.RedisPort,
-		Password: "",
+		URL:      config.RedisBaseURL,
 		Database: 0,
 		Reset:    false,
 	})
