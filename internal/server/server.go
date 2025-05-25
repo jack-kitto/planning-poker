@@ -28,6 +28,8 @@ func New() *FiberServer {
 		db: database.New(),
 	}
 
+	session.InitSessionStore()
+
 	// Initialize handlers with dependencies
 	handlers := handlers.NewHandlers(server.db, session.Store)
 

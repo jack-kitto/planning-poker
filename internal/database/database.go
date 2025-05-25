@@ -26,6 +26,7 @@ type Service interface {
 	CreateUser(name string, email string) (*models.User, error)
 	UpdateUser(name string, email string) (*models.User, error)
 	GetUser(email string) (*models.User, error)
+	GetUserById(id string) (*models.User, error)
 	GetUserWithOrg(email string) (*models.User, error)
 
 	// Organisation operations
@@ -38,6 +39,9 @@ type Service interface {
 	GetSession(id string) (*models.Session, error)
 	UpdateSessionName(id string, name string) error
 	CreateSessionParticipant(sesh *models.Session, owner *models.User) (*models.SessionParticipant, error)
+	GetSessionsForUser(userID string) ([]*models.Session, error)
+	DeactivateSessionParticipant(sesh *models.Session, user *models.User) error
+	ActivateSessionParticipant(sesh *models.Session, user *models.User) error
 
 	// User story operations
 	CreateStory(sesh *models.Session, title string, description *string, index string) (*models.UserStory, error)

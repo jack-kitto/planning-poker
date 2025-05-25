@@ -27,8 +27,16 @@ func (s *service) CreateUser(name string, email string) (*models.User, error) {
 
 func (s *service) GetUser(email string) (*models.User, error) {
 	user := new(models.User)
-	println(email)
 	err := s.db.NewSelect().Model(user).Where("email = ?", email).Scan(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (s *service) GetUserById(id string) (*models.User, error) {
+	user := new(models.User)
+	err := s.db.NewSelect().Model(user).Where("id = ?", id).Scan(context.Background())
 	if err != nil {
 		return nil, err
 	}

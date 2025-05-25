@@ -1,4 +1,11 @@
 services:
+  redis:
+      image: redis:latest
+      ports:
+        - "6379:6379"
+      volumes:
+        - redis_data:/data
+      restart: unless-stopped
   app:
     build:
       context: .
@@ -43,5 +50,6 @@ services:
 
 volumes:
   psql_volume_bp:
+  redis_data:
 networks:
   blueprint:

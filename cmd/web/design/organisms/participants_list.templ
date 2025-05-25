@@ -1,0 +1,61 @@
+package organisms
+
+import "planning-poker/internal/server/models"
+
+import (
+	"strconv"
+	"strings"
+)
+
+func GetOnline(session *models.Session) []models.SessionParticipant {
+
+	online := []models.SessionParticipant{}
+	for _, participant := range session.Participants {
+		if participant.IsOnline {
+			online = append(online, *participant)
+		}
+	}
+	return online
+}
+
+templ ParticipantsList(session *models.Session) {
+	for i, participant := range GetOnline(session) {
+		if i < 5 {
+			<div
+				class="w-14 h-14 rounded-full bg-secondary-700 flex items-center justify-center text-xl font-bold border-2 border-primary-500 shadow ring-2 ring-primary-400 -ml-2"
+				title={ participant.User.Name }
+			>
+				{ Initials(participant.User) }
+			</div>
+		}
+	}
+	if len(GetOnline(session)) > 5 {
+		<div class="w-14 h-14 rounded-full bg-primary-500 flex items-center justify-center text-xl font-bold border-2 border-primary-700 shadow -ml-2">
+			+{ strconv.Itoa(len(GetOnline(session)) - 5) }
+		</div>
+	}
+}
+
+// Helper to get initials from user (assuming User has Name or Email)
+func Initials(user *models.User) string {
+	if user == nil {
+		return "??"
+	}
+	name := user.Name
+	if name == "" {
+		// fallback to email
+		parts := strings.Split(user.Email, "@")
+		name = parts[0]
+	}
+	fields := strings.Fields(name)
+	if len(fields) == 0 {
+		return "??"
+	}
+	if len(fields) == 1 {
+		if len(fields[0]) >= 2 {
+			return strings.ToUpper(fields[0][:2])
+		}
+		return strings.ToUpper(fields[0])
+	}
+	return strings.ToUpper(string(fields[0][0]) + string(fields[1][0]))
+}
