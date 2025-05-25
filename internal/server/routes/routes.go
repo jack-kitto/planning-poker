@@ -3,14 +3,11 @@ package routes
 import (
 	"net/http"
 	"planning-poker/cmd/web"
-	"planning-poker/cmd/web/pages"
 	"planning-poker/internal/server/handlers"
 	"planning-poker/internal/server/middleware"
 
-	"github.com/a-h/templ"
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 )
@@ -52,9 +49,9 @@ func RegisterFiberRoutes(app *fiber.App, handlers *handlers.Handlers) {
 	// ==========================================
 
 	// Landing and login pages
-	app.Get("/", adaptor.HTTPHandler(templ.Handler(pages.LandingPage())))
-	app.Get("/login", adaptor.HTTPHandler(templ.Handler(pages.LoginPage())))
-	app.Get("/verification-success", adaptor.HTTPHandler(templ.Handler(pages.VerificationSuccessPage())))
+	app.Get("/", handlers.LandingPageHandler)
+	app.Get("/login", handlers.LoginPageHandler)
+	app.Get("/verification-success", handlers.VerificationSuccessHandler)
 
 	// Health check endpoint
 	app.Get("/health", handlers.HealthHandler)
