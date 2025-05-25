@@ -5,34 +5,32 @@ import (
 	"planning-poker/internal/server/models"
 	"fmt"
 	"planning-poker/cmd/web/design/organisms"
-	// "planning-poker/cmd/web/scripts"
 )
 
 templ SessionPage(session *models.Session, user *models.User) {
 	@templates.DashTemplate() {
-		<!-- @scripts.SessionHeartbeatScript(session.ID) -->
 		<div class="w-full h-full min-h-screen bg-background-default text-white flex flex-col">
-			<div class="flex justify-between items-center px-12 pt-10 pb-4">
+			<div class="flex justify-between items-center px-12 pt-10 pb-4 w-full">
 				@organisms.SessionTitle(session)
 				<div
-					class="flex items-center"
+					class="items-center flex flex-row"
 					hx-ext="ws"
 					ws-connect={ "/ws/session/" + session.ID + "/" + user.ID }
 				>
-					<div id="participants-list flex">
+					<div id="participants-list" class="w-full flex flex-row">
 						@organisms.ParticipantsList(session)
+						<button
+							class="w-14 h-14 rounded-full bg-secondary-700 ring-2 ring-primary-400 hover:bg-primary-500 flex items-center justify-center text-xl font-bold border-2 border-primary-700 shadow -ml-2 transition-all duration-300 ease-in-out transform hover:scale-110 hover:rotate-12 hover:shadow-lg hover:ring-primary-300 active:scale-95 active:rotate-0 active:bg-primary-600 active:shadow-inner"
+							title="Invite participants"
+							hx-trigger="click"
+							hx-target="#invite-popup"
+							hx-get={ fmt.Sprintf("/session/%s/invite", session.ID) }
+						>
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 transition-transform duration-300 group-hover:scale-110 group-active:scale-90">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z"></path>
+							</svg>
+						</button>
 					</div>
-					<button
-						class="w-14 h-14 rounded-full bg-secondary-700 ring-2 ring-primary-400 hover:bg-primary-500 flex items-center justify-center text-xl font-bold border-2 border-primary-700 shadow -ml-2 transition-all duration-300 ease-in-out transform hover:scale-110 hover:rotate-12 hover:shadow-lg hover:ring-primary-300 active:scale-95 active:rotate-0 active:bg-primary-600 active:shadow-inner"
-						title="Invite participants"
-						hx-trigger="click"
-						hx-target="#invite-popup"
-						hx-get={ fmt.Sprintf("/session/%s/invite", session.ID) }
-					>
-						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 transition-transform duration-300 group-hover:scale-110 group-active:scale-90">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z"></path>
-						</svg>
-					</button>
 				</div>
 			</div>
 			<div class="flex-1 flex flex-col items-center">
